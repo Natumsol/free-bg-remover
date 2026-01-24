@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI Background Remover - Batch Processing</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0606f9",
+                        "background-light": "#f5f5f8",
+                        "background-dark": "#0f0f23",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "2xl": "2rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for a cleaner look */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #334155; 
+        }
+        .dark ::-webkit-scrollbar-thumb:hover {
+            background: #475569; 
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white antialiased overflow-hidden selection:bg-primary/20 selection:text-primary">
+<div class="flex h-screen w-full overflow-hidden">
+<!-- Sidebar -->
+<aside class="w-72 flex-shrink-0 flex flex-col bg-white dark:bg-[#13132b] border-r border-slate-200 dark:border-slate-800 z-20">
+<div class="p-6 pb-2">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-xl bg-gradient-to-br from-primary to-blue-400 flex items-center justify-center shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-white text-[24px]">auto_fix_high</span>
+</div>
+<div>
+<h1 class="text-base font-bold leading-tight text-slate-900 dark:text-white">AI BG Remover</h1>
+<p class="text-xs font-medium text-slate-500 dark:text-slate-400">Pro Edition</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 flex flex-col gap-2 px-4 py-6">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors group" href="#">
+<span class="material-symbols-outlined text-[22px] group-hover:text-slate-900 dark:group-hover:text-white">image</span>
+<span class="text-sm font-medium">Single Image</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-primary/10 text-primary dark:text-blue-400" href="#">
+<span class="material-symbols-outlined text-[22px] fill-1">layers</span>
+<span class="text-sm font-bold">Batch Process</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors group" href="#">
+<span class="material-symbols-outlined text-[22px] group-hover:text-slate-900 dark:group-hover:text-white">history</span>
+<span class="text-sm font-medium">History</span>
+</a>
+<div class="my-2 h-px bg-slate-100 dark:bg-slate-800 mx-3"></div>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors group" href="#">
+<span class="material-symbols-outlined text-[22px] group-hover:text-slate-900 dark:group-hover:text-white">settings</span>
+<span class="text-sm font-medium">Settings</span>
+</a>
+</nav>
+<div class="p-4 mt-auto">
+<div class="flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50">
+<span class="material-symbols-outlined text-emerald-500 text-[20px]">lock</span>
+<div class="flex flex-col">
+<p class="text-xs font-bold text-slate-900 dark:text-white">Local Mode Active</p>
+<p class="text-[10px] text-slate-500 dark:text-slate-400">Data never leaves device</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col h-full min-w-0 bg-background-light dark:bg-background-dark relative">
+<!-- Top Action Bar -->
+<header class="flex-shrink-0 px-8 py-6 bg-background-light dark:bg-background-dark z-10">
+<div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 max-w-[1400px] mx-auto w-full">
+<!-- Page Title -->
+<div class="flex flex-col gap-1">
+<h2 class="text-3xl font-black tracking-tight text-slate-900 dark:text-white">Batch Queue</h2>
+<div class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-[18px]">dns</span>
+<span class="text-sm font-medium">12 items in queue</span>
+</div>
+</div>
+<!-- Toolbar -->
+<div class="flex flex-wrap items-center gap-3">
+<!-- Output Format Select -->
+<div class="relative group min-w-[160px]">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-slate-400 text-[20px]">output</span>
+</div>
+<select class="appearance-none w-full pl-10 pr-10 py-2.5 bg-white dark:bg-[#1e1e38] border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20 hover:border-slate-300 dark:hover:border-slate-600 transition-colors cursor-pointer shadow-sm">
+<option value="png">Output: PNG</option>
+<option value="jpg">Output: JPG</option>
+<option value="webp">Output: WebP</option>
+</select>
+<div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-slate-400 text-[20px]">expand_more</span>
+</div>
+</div>
+<!-- Add Images Button -->
+<button class="flex items-center gap-2 px-5 py-2.5 bg-white dark:bg-[#1e1e38] border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 text-slate-900 dark:text-white text-sm font-bold rounded-xl shadow-sm transition-all active:scale-95">
+<span class="material-symbols-outlined text-[20px]">add_photo_alternate</span>
+                            Add Images
+                        </button>
+<!-- Process All Button -->
+<button class="flex items-center gap-2 px-6 py-2.5 bg-primary hover:bg-blue-700 text-white text-sm font-bold rounded-xl shadow-lg shadow-primary/25 transition-all active:scale-95">
+<span class="material-symbols-outlined text-[20px]">play_arrow</span>
+                            Process All
+                        </button>
+</div>
+</div>
+</header>
+<!-- Scrollable Grid Content -->
+<div class="flex-1 overflow-y-auto px-8 pb-8" id="drop-zone">
+<div class="max-w-[1400px] mx-auto w-full">
+<!-- Drag & Drop Helper (Optional Visual) -->
+<div class="hidden border-2 border-dashed border-primary/30 rounded-2xl bg-primary/5 h-32 flex flex-col items-center justify-center mb-6 text-center animate-pulse">
+<span class="material-symbols-outlined text-primary text-3xl mb-2">cloud_upload</span>
+<p class="text-primary font-medium">Drop files here to add to queue</p>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+<!-- Completed Card -->
+<div class="group relative flex flex-col gap-3 p-3 rounded-2xl bg-white dark:bg-[#1e1e38] border border-slate-200 dark:border-slate-700/60 shadow-sm hover:shadow-md transition-all hover:-translate-y-1">
+<div class="relative w-full aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl overflow-hidden">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="Product shot of white sneakers on a light background" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAKMU6_mk_Ls4K0FRJ-dhIVaEM5Oz9IHJ-2_QhKC8khLD_--_lv9e8rM4UUSY8jfX_ZFms1YJHOukpUfeJDHdbfioFNdkSzW6v7LcJ-diwlp4e89xgHKX5E3TYMM7DXuKuRcPhUDKOE5xD-ihsV17H1qMVWubpXHiV19rYo4cwJMyUxCDN78SkTG9Mn2jdSk4jIPsDBaTCh5SV8g5OpobFcIKyb1B10UrTukUpDnxrwklQB_SWsgIHhOTdwM0ifHexnes28okRzuX8");'></div>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+<button class="size-9 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white text-white hover:text-primary flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</button>
+<button class="size-9 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white text-white hover:text-red-500 flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+<div class="absolute top-2 right-2">
+<div class="size-6 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[16px]">check</span>
+</div>
+</div>
+</div>
+<div class="px-1">
+<p class="text-sm font-bold text-slate-900 dark:text-white truncate">product_sneakers_01.jpg</p>
+<p class="text-xs font-medium text-emerald-600 dark:text-emerald-400 flex items-center gap-1 mt-0.5">
+                                    Completed
+                                </p>
+</div>
+</div>
+<!-- Processing Card -->
+<div class="group relative flex flex-col gap-3 p-3 rounded-2xl bg-white dark:bg-[#1e1e38] border border-primary/30 dark:border-primary/30 shadow-md shadow-primary/5 transition-all">
+<div class="relative w-full aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl overflow-hidden">
+<div class="absolute inset-0 bg-cover bg-center opacity-80" data-alt="Portrait of a woman smiling with a blurred background" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCW2RmSk8SQ6pcr1mCdYFF_VJ0NVNt_eWxRZm_TgdFBf6wnXN5vRF0EuIQk0Uni97OT111QxcmWd7LzN1PdwdnC7V7APtlXvgHZ6PIlaB-3DXJvd2Il3yqcjOHe-Q-3gn5n-t-BMD0hX4NMCPD4lJCpM4o1FPNfC_7z7Tvl1U9Lt_3oFj_4phjH9pYVsh9FIGEo_VDxM8LYwn00T64olk2MWE1ar2BlOGcE2IM1_0nKL2upgpx9LM3ex-LVmV7oRjEZ5XLOXnOsK4A");'></div>
+<!-- Processing Overlay -->
+<div class="absolute inset-0 bg-white/30 dark:bg-black/30 backdrop-blur-[2px] flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-[48px] animate-spin">progress_activity</span>
+</div>
+</div>
+<div class="px-1">
+<p class="text-sm font-bold text-slate-900 dark:text-white truncate">portrait_studio_v2.jpg</p>
+<div class="flex items-center gap-2 mt-1">
+<div class="h-1.5 flex-1 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+<div class="h-full w-[60%] bg-primary rounded-full"></div>
+</div>
+<span class="text-xs font-bold text-primary">60%</span>
+</div>
+</div>
+</div>
+<!-- Processing Card 2 -->
+<div class="group relative flex flex-col gap-3 p-3 rounded-2xl bg-white dark:bg-[#1e1e38] border border-slate-200 dark:border-slate-700/60 shadow-sm transition-all">
+<div class="relative w-full aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl overflow-hidden">
+<div class="absolute inset-0 bg-cover bg-center opacity-80" data-alt="Close up of a mechanical watch" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBkapxEpQJFIyH7gwprJ96lGKQ-c9ouFOB_IDctUEAu68uy7fmOcU7MW-wXQY0VqOS5c-JIyUjLr0jM0NrbsWbFzYeT2NVwIeKyZyd3hi_DXcT-3d7OGtbayNQ5MOxNjXHxCreWTrbYP1tl3xnmvkJNQB-yIO5NZkJhpRRnPGn7yH7Kkm53GhPnJ2jeYsHRzQCP5Ep2GCsLXVpVqur-xZbmgMLMm_XtQgLCj9FapKGohY4vkbkPkfnqImMVzg1LNZPdDgkbxxZ5POo");'></div>
+<div class="absolute inset-0 bg-white/30 dark:bg-black/30 backdrop-blur-[2px] flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-[48px] animate-spin">progress_activity</span>
+</div>
+</div>
+<div class="px-1">
+<p class="text-sm font-bold text-slate-900 dark:text-white truncate">watch_macro_05.raw</p>
+<div class="flex items-center gap-2 mt-1">
+<div class="h-1.5 flex-1 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+<div class="h-full w-[15%] bg-primary rounded-full"></div>
+</div>
+<span class="text-xs font-bold text-primary">15%</span>
+</div>
+</div>
+</div>
+<!-- Waiting Card -->
+<div class="group relative flex flex-col gap-3 p-3 rounded-2xl bg-white dark:bg-[#1e1e38] border border-slate-200 dark:border-slate-700/60 shadow-sm hover:shadow-md transition-all hover:-translate-y-1">
+<div class="relative w-full aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl overflow-hidden">
+<div class="absolute inset-0 bg-cover bg-center grayscale-[50%]" data-alt="Modern architecture building with blue sky" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCpKczB-Jcc7q7cap2Es233aGLfy_Os4L6VnIRVuinQSWlJXGQJuknzBT1dkYoLwJ5UMANk4jm68STq1DT0CGmPGlQtAOcEA03hzctSPISmyzUf5pGaHNIgh799cUHQBBxc8WsXZrYQQhiaEwyw-rmQ4oxIFV8DzgDFrrMxCbJaOvNbfAspoPqusbI6dEUj5vsu_pyJgNy90p_WkjxalzYh-vub-ucqcPv5kl1Z6E7evZxpOSZGANMjZvY81ORC4ha0PcRWf9DQeac");'></div>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+<button class="size-9 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white text-white hover:text-red-500 flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+<div class="absolute top-2 left-2">
+<div class="px-2 py-0.5 rounded-md bg-black/50 backdrop-blur-md border border-white/10">
+<p class="text-[10px] font-medium text-white">4.2 MB</p>
+</div>
+</div>
+</div>
+<div class="px-1">
+<p class="text-sm font-bold text-slate-900 dark:text-white truncate">architecture_blue.jpg</p>
+<p class="text-xs font-medium text-slate-500 dark:text-slate-400 flex items-center gap-1 mt-0.5">
+<span class="size-1.5 rounded-full bg-slate-400"></span> Waiting
+                                </p>
+</div>
+</div>
+<!-- Waiting Card -->
+<div class="group relative flex flex-col gap-3 p-3 rounded-2xl bg-white dark:bg-[#1e1e38] border border-slate-200 dark:border-slate-700/60 shadow-sm hover:shadow-md transition-all hover:-translate-y-1">
+<div class="relative w-full aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl overflow-hidden">
+<div class="absolute inset-0 bg-cover bg-center grayscale-[50%]" data-alt="Fresh organic vegetables on a wooden table" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB8bR_eIglZMUnhtqCKn9NwNxtMiknGOr8StDwYnPaa5YCENJX0e8XStkh9mmcQVqNSbUd6nKskedu14VNQoesWLcdtsVxbjB1AK3n3doZk7l8K2FzdxUNyoCztFJkcOebQeDRi9T2F_9T_22q6IAEPG8s9gllE0yBSBevX4t-RWXXxkt65hYZoc5KUL-COLGszJZfgH0cUe3w6V5U0k8mhVIKIJnXKcfsmFg9FnnTaPmZ74t3UvUfNmtjTq4rjvohR_BKiCmzZM1I");'></div>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+<button class="size-9 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white text-white hover:text-red-500 flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</div>
+<div class="px-1">
+<p class="text-sm font-bold text-slate-900 dark:text-white truncate">food_prep_overhead.jpg</p>
+<p class="text-xs font-medium text-slate-500 dark:text-slate-400 flex items-center gap-1 mt-0.5">
+<span class="size-1.5 rounded-full bg-slate-400"></span> Waiting
+                                </p>
+</div>
+</div>
+<!-- Waiting Card -->
+<div class="group relative flex flex-col gap-3 p-3 rounded-2xl bg-white dark:bg-[#1e1e38] border border-slate-200 dark:border-slate-700/60 shadow-sm hover:shadow-md transition-all hover:-translate-y-1">
+<div class="relative w-full aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl overflow-hidden">
+<div class="absolute inset-0 bg-cover bg-center grayscale-[50%]" data-alt="A golden retriever dog sitting in a park" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDurgUAjyfqX9IJuZ6v215N9g7RybXDuwyI_L3LBQgiHIBPndYkld31CZbMfe3-Z9SC_FUsXH26wdoYgkHtegNJi6jIHfYrku22cDnmkHHZkUzUV3zc379oPsnZZigresd4kkB84OcDJ3s-LUY-wbptvvGveZBAvvJdzc7txvyM-9qnkuX-Vc1ToLGUMwEF00YS10yXFldzK7eJDI7-g9G3UDCpH0Gc1-NLnKE7S_doy7YWxkvRXAW_88IKLSG7lir_COayENBrMbY");'></div>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+<button class="size-9 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white text-white hover:text-red-500 flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</div>
+<div class="px-1">
+<p class="text-sm font-bold text-slate-900 dark:text-white truncate">dog_park_sunny.png</p>
+<p class="text-xs font-medium text-slate-500 dark:text-slate-400 flex items-center gap-1 mt-0.5">
+<span class="size-1.5 rounded-full bg-slate-400"></span> Waiting
+                                </p>
+</div>
+</div>
+<!-- Waiting Card -->
+<div class="group relative flex flex-col gap-3 p-3 rounded-2xl bg-white dark:bg-[#1e1e38] border border-slate-200 dark:border-slate-700/60 shadow-sm hover:shadow-md transition-all hover:-translate-y-1">
+<div class="relative w-full aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl overflow-hidden">
+<div class="absolute inset-0 bg-cover bg-center grayscale-[50%]" data-alt="Abstract colorful geometric pattern" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA40WLjrbjGQu5njG9hjqtzGY2zAjZlgHu8TrEa0NOCZm3MibHIu1lgEpJP6KJjmTbYeAym1Uu52S0_G_Cpim9ST-Eddn_qrQ1w2FH8X3ugxu7-4CfbVYH4AD0Ft17RTi8FjGPaPJjF4YUMAPxUqtdlhaX5YMtB3OHMhT416JMceFDiIRk1wU3inn8AXROyfCCmx3YLyJxyk6l4QHpM4I7PptO4T-lZbccrDQt25WL64X46pDs1jrkaWe0Pq5pPv-N2pUZ-YrRKXiw");'></div>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+<button class="size-9 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white text-white hover:text-red-500 flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</div>
+<div class="px-1">
+<p class="text-sm font-bold text-slate-900 dark:text-white truncate">abstract_bg_09.jpg</p>
+<p class="text-xs font-medium text-slate-500 dark:text-slate-400 flex items-center gap-1 mt-0.5">
+<span class="size-1.5 rounded-full bg-slate-400"></span> Waiting
+                                </p>
+</div>
+</div>
+<!-- Waiting Card -->
+<div class="group relative flex flex-col gap-3 p-3 rounded-2xl bg-white dark:bg-[#1e1e38] border border-slate-200 dark:border-slate-700/60 shadow-sm hover:shadow-md transition-all hover:-translate-y-1">
+<div class="relative w-full aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl overflow-hidden">
+<div class="absolute inset-0 bg-cover bg-center grayscale-[50%]" data-alt="Vintage camera on a wooden desk" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAK3qrjSTNododaGa3oy9kzeQF0YjVTTAF2J2WERFpgSsZ3A5U_mL8LO5jGPx2MefJrEhtWbcZqMZ7a55hUsmY8d9VXgjBqK9hsSVk5zgtmuXjyHxzaagW-9_NHED3mo3Q3fEwu-_QzLuBG6NNeBmmGtqaXx1cRHFJLdrZ_KOuEEDxejYhiDXYIFLd8mHjvoSAMX89KFl3TbrxvjT7y7JKt6G_J8EhTAL7V8yI2xr3gNYTVt38K4aKqbDVT6e4TFIGSBecPRnI4TWQ");'></div>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+<button class="size-9 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white text-white hover:text-red-500 flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</div>
+<div class="px-1">
+<p class="text-sm font-bold text-slate-900 dark:text-white truncate">camera_vintage.jpg</p>
+<p class="text-xs font-medium text-slate-500 dark:text-slate-400 flex items-center gap-1 mt-0.5">
+<span class="size-1.5 rounded-full bg-slate-400"></span> Waiting
+                                </p>
+</div>
+</div>
+<!-- Upload Placeholder Card -->
+<div class="group relative flex flex-col items-center justify-center gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-primary/50 hover:bg-primary/5 cursor-pointer transition-all min-h-[240px]">
+<div class="size-12 rounded-full bg-white dark:bg-slate-800 shadow-sm flex items-center justify-center group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary text-[24px]">add</span>
+</div>
+<p class="text-sm font-medium text-slate-500 group-hover:text-primary text-center px-4">Click to add more images</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Status (Optional sticky bar for processing context) -->
+<div class="flex-shrink-0 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-[#13132b] px-8 py-3 z-10">
+<div class="max-w-[1400px] mx-auto w-full flex items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<div class="flex items-center justify-center size-5">
+<span class="material-symbols-outlined text-primary text-[20px] animate-spin">progress_activity</span>
+</div>
+<p class="text-sm font-medium text-slate-700 dark:text-slate-300">Processing 2 of 12 images...</p>
+</div>
+<div class="flex items-center gap-4 w-64">
+<div class="flex-1 h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+<div class="h-full w-[25%] bg-primary rounded-full transition-all duration-500"></div>
+</div>
+<span class="text-xs font-bold text-slate-500 dark:text-slate-400">25%</span>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>
