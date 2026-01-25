@@ -71,7 +71,7 @@ export const HistoryView: React.FC = observer(() => {
     const formatTime = (timestamp: number): string => {
         const now = Date.now();
         const diff = now - timestamp;
-        
+
         if (diff < 60 * 1000) return t('history.justNow');
         if (diff < 60 * 60 * 1000) return `${Math.floor(diff / (60 * 1000))}${t('history.minutesAgo')}`;
         if (diff < 24 * 60 * 60 * 1000) return `${Math.floor(diff / (60 * 60 * 1000))}${t('history.hoursAgo')}`;
@@ -128,11 +128,10 @@ export const HistoryView: React.FC = observer(() => {
                         <div className="h-10 p-1 rounded-lg bg-slate-100 dark:bg-gray-800 flex items-center">
                             <button
                                 onClick={() => setViewMode('grid')}
-                                className={`h-full px-3 rounded-md flex items-center justify-center transition-all ${
-                                    viewMode === 'grid'
+                                className={`h-full px-3 rounded-md flex items-center justify-center transition-all ${viewMode === 'grid'
                                         ? 'bg-white dark:bg-gray-700 shadow-sm text-slate-900 dark:text-white'
                                         : 'text-slate-600 hover:text-slate-900 dark:hover:text-white'
-                                }`}
+                                    }`}
                             >
                                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z" />
@@ -140,11 +139,10 @@ export const HistoryView: React.FC = observer(() => {
                             </button>
                             <button
                                 onClick={() => setViewMode('list')}
-                                className={`h-full px-3 rounded-md flex items-center justify-center transition-all ${
-                                    viewMode === 'list'
+                                className={`h-full px-3 rounded-md flex items-center justify-center transition-all ${viewMode === 'list'
                                         ? 'bg-white dark:bg-gray-700 shadow-sm text-slate-900 dark:text-white'
                                         : 'text-slate-600 hover:text-slate-900 dark:hover:text-white'
-                                }`}
+                                    }`}
                             >
                                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M3 4h18v2H3V4zm0 7h18v2H3v-2zm0 7h18v2H3v-2z" />
@@ -157,21 +155,19 @@ export const HistoryView: React.FC = observer(() => {
                 <div className="flex gap-2">
                     <button
                         onClick={() => setFilter('all')}
-                        className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                            filter === 'all'
+                        className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${filter === 'all'
                                 ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900'
                                 : 'bg-slate-100 dark:bg-gray-800 text-slate-600 dark:text-gray-400 hover:bg-slate-200 dark:hover:bg-gray-700'
-                        }`}
+                            }`}
                     >
                         {t('history.filterAll')}
                     </button>
                     <button
                         onClick={() => setFilter('last7days')}
-                        className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                            filter === 'last7days'
-                                ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900'
-                                : 'bg-slate-100 dark:bg-gray-800 text-slate-600 dark:text-gray-400 hover:bg-slate-200 dark:hover:bg-gray-700'
-                        }`}
+                        className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${filter === 'last7days'
+                            ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900'
+                            : 'bg-slate-100 dark:bg-gray-800 text-slate-600 dark:text-gray-400 hover:bg-slate-200 dark:hover:bg-gray-700'
+                            }`}
                     >
                         {t('history.filterLast7Days')}
                     </button>
@@ -221,7 +217,7 @@ export const HistoryView: React.FC = observer(() => {
                         {filteredImages.map((image) => (
                             <div
                                 key={image.id}
-                                className="group relative flex flex-col rounded-xl bg-white dark:bg-sidebar-dark border border-slate-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden"
+                                className="group relative flex flex-col rounded-xl bg-white dark:bg-[#151530] border border-slate-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden"
                             >
                                 {/* Image Preview */}
                                 <div className="relative h-48 w-full bg-checkered overflow-hidden">

@@ -3,7 +3,7 @@
 
 @import "tailwindcss";
 
-@variant dark (&:where(.dark, .dark *));
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
   --color-primary: #0606f9;
@@ -87,6 +87,25 @@
 }
 
 @layer utilities {
+
+  /* Dynamic background colors that respond to dark mode */
+  .bg-app-background {
+    background-color: var(--color-background-light);
+  }
+
+  .dark .bg-app-background {
+    background-color: var(--color-background-dark);
+  }
+
+  .bg-app-sidebar {
+    background-color: var(--color-sidebar-light);
+  }
+
+  .dark .bg-app-sidebar {
+    background-color: var(--color-sidebar-dark);
+  }
+
+  /* Keep legacy classes for backward compatibility */
   .bg-background-light {
     background-color: var(--color-background-light);
   }
