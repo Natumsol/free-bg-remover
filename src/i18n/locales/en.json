@@ -1,0 +1,124 @@
+{
+    "app": {
+        "name": " Free AI BG Remover",
+        "subtitle": "Safe and Secure"
+    },
+    "nav": {
+        "home": "Home",
+        "batch": "Batch Process",
+        "history": "History",
+        "settings": "Settings"
+    },
+    "status": {
+        "localMode": "Local Mode",
+        "active": "Active",
+        "loading": "Loading...",
+        "dataSecure": "Data never leaves device"
+    },
+    "home": {
+        "title": "Background Removal Made Simple",
+        "subtitle": "Drop your images here or click to browse",
+        "dragActive": "Drop files to start processing",
+        "processing": "Processing your images...",
+        "selectFiles": "Select Images",
+        "offlinePrivate": "100% Offline & Private",
+        "processingSpeed": "Processed in < 1s",
+        "highQuality": "High Quality Output"
+    },
+    "batch": {
+        "title": "Batch Queue",
+        "itemsInQueue": "{{count}} item in queue",
+        "itemsInQueue_plural": "{{count}} items in queue",
+        "completed": "{{count}} completed",
+        "addImages": "Add Images",
+        "processAll": "Process All",
+        "processing": "Processing...",
+        "clearCompleted": "Clear Completed",
+        "noImages": "No images in queue",
+        "noImagesDesc": "Add multiple images to process them all at once. Perfect for batch background removal.",
+        "addToQueue": "Add Images to Queue",
+        "addMore": "Click to add more images",
+        "processingStatus": "Processing {{current}} of {{total}} images...",
+        "status": {
+            "waiting": "Waiting",
+            "processing": "Processing",
+            "completed": "Completed",
+            "error": "Error"
+        }
+    },
+    "result": {
+        "title": "Processing Complete",
+        "compare": "Compare Result",
+        "editBackground": "Edit Background",
+        "saveImage": "Save Image",
+        "processMore": "Process More",
+        "backToHome": "Back to Home",
+        "originalLabel": "Original",
+        "processedLabel": "Processed"
+    },
+    "background": {
+        "title": "Background Editor",
+        "transparent": "Transparent",
+        "solidColor": "Solid Color",
+        "customImage": "Custom Image",
+        "selectColor": "Select Color",
+        "uploadImage": "Upload Image",
+        "apply": "Apply",
+        "cancel": "Cancel"
+    },
+    "history": {
+        "title": "History",
+        "subtitle": "Manage and download your processed images",
+        "searchPlaceholder": "Search by filename...",
+        "filterAll": "All",
+        "filterLast7Days": "Last 7 Days",
+        "clearAll": "Clear All",
+        "confirmClearAll": "Are you sure you want to clear all history? This action cannot be undone.",
+        "confirmDelete": "Are you sure you want to delete this image?",
+        "empty": "No History Yet",
+        "emptyDescription": "Processed images will appear here",
+        "startProcessing": "Start Processing",
+        "download": "Download",
+        "edit": "Edit",
+        "delete": "Delete",
+        "justNow": "Just now",
+        "minutesAgo": "m ago",
+        "hoursAgo": "h ago"
+    },
+    "settings": {
+        "title": "Settings",
+        "language": "Language",
+        "theme": "Theme",
+        "themeLight": "Light",
+        "themeDark": "Dark",
+        "themeAuto": "Auto",
+        "general": "General",
+        "appearance": "Appearance",
+        "performance": "Performance",
+        "about": "About",
+        "version": "Version",
+        "modelInfo": "Model Information",
+        "modelName": "Model",
+        "modelStatus": "Status",
+        "modelReady": "Ready",
+        "modelLoading": "Loading",
+        "modelError": "Error",
+        "selectLanguage": "Select Language",
+        "selectTheme": "Select Theme"
+    },
+    "common": {
+        "save": "Save",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "download": "Download",
+        "close": "Close",
+        "confirm": "Confirm",
+        "back": "Back",
+        "next": "Next",
+        "previous": "Previous",
+        "ok": "OK",
+        "loading": "Loading...",
+        "error": "Error",
+        "success": "Success"
+    }
+}

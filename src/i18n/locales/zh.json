@@ -1,0 +1,124 @@
+{
+    "app": {
+        "name": "免费 AI 抠图工具",
+        "subtitle": "安全且可靠"
+    },
+    "nav": {
+        "home": "首页",
+        "batch": "批量处理",
+        "history": "历史记录",
+        "settings": "设置"
+    },
+    "status": {
+        "localMode": "本地模式",
+        "active": "已激活",
+        "loading": "加载中...",
+        "dataSecure": "数据不会离开设备"
+    },
+    "home": {
+        "title": "轻松去除背景",
+        "subtitle": "拖放图片到此处或点击浏览",
+        "dragActive": "放开以开始处理",
+        "processing": "正在处理图片...",
+        "selectFiles": "选择图片",
+        "offlinePrivate": "100% 离线和私密",
+        "processingSpeed": "处理速度 < 1秒",
+        "highQuality": "高质量输出"
+    },
+    "batch": {
+        "title": "批量队列",
+        "itemsInQueue": "队列中 {{count}} 项",
+        "itemsInQueue_plural": "队列中 {{count}} 项",
+        "completed": "已完成 {{count}} 项",
+        "addImages": "添加图片",
+        "processAll": "全部处理",
+        "processing": "处理中...",
+        "clearCompleted": "清除已完成",
+        "noImages": "队列中没有图片",
+        "noImagesDesc": "添加多张图片以批量去除背景，提高工作效率。",
+        "addToQueue": "添加图片到队列",
+        "addMore": "点击添加更多图片",
+        "processingStatus": "正在处理第 {{current}} 项，共 {{total}} 项...",
+        "status": {
+            "waiting": "等待中",
+            "processing": "处理中",
+            "completed": "已完成",
+            "error": "错误"
+        }
+    },
+    "result": {
+        "title": "处理完成",
+        "compare": "对比效果",
+        "editBackground": "编辑背景",
+        "saveImage": "保存图片",
+        "processMore": "处理更多",
+        "backToHome": "返回首页",
+        "originalLabel": "原图",
+        "processedLabel": "处理后"
+    },
+    "background": {
+        "title": "背景编辑器",
+        "transparent": "透明",
+        "solidColor": "纯色",
+        "customImage": "自定义图片",
+        "selectColor": "选择颜色",
+        "uploadImage": "上传图片",
+        "apply": "应用",
+        "cancel": "取消"
+    },
+    "history": {
+        "title": "历史记录",
+        "subtitle": "管理和下载您处理过的图片",
+        "searchPlaceholder": "按文件名搜索...",
+        "filterAll": "全部",
+        "filterLast7Days": "最近 7 天",
+        "clearAll": "清空全部",
+        "confirmClearAll": "确定要清空所有历史记录吗？此操作无法撤销。",
+        "confirmDelete": "确定要删除这张图片吗？",
+        "empty": "暂无历史记录",
+        "emptyDescription": "处理过的图片会显示在这里",
+        "startProcessing": "开始处理",
+        "download": "下载",
+        "edit": "编辑",
+        "delete": "删除",
+        "justNow": "刚刚",
+        "minutesAgo": "分钟前",
+        "hoursAgo": "小时前"
+    },
+    "settings": {
+        "title": "设置",
+        "language": "语言",
+        "theme": "主题",
+        "themeLight": "浅色",
+        "themeDark": "深色",
+        "themeAuto": "自动",
+        "general": "通用",
+        "appearance": "外观",
+        "performance": "性能",
+        "about": "关于",
+        "version": "版本",
+        "modelInfo": "模型信息",
+        "modelName": "模型",
+        "modelStatus": "状态",
+        "modelReady": "就绪",
+        "modelLoading": "加载中",
+        "modelError": "错误",
+        "selectLanguage": "选择语言",
+        "selectTheme": "选择主题"
+    },
+    "common": {
+        "save": "保存",
+        "cancel": "取消",
+        "delete": "删除",
+        "download": "下载",
+        "close": "关闭",
+        "confirm": "确认",
+        "back": "返回",
+        "next": "下一步",
+        "previous": "上一步",
+        "ok": "确定",
+        "loading": "加载中...",
+        "error": "错误",
+        "success": "成功"
+    }
+}
