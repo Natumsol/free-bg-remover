@@ -52,7 +52,7 @@ export const DropZone: React.FC = observer(() => {
 
             {/* Main Drop Zone Area */}
             <div
-                className={`relative flex flex-1 flex-col overflow-hidden rounded-2xl border-2 border-dashed bg-white dark:bg-sidebar-dark shadow-soft transition-all duration-300 group ${appStore.isDragOver
+                className={`relative flex flex-1 flex-col overflow-hidden rounded-2xl border-2 border-dashed bg-white dark:bg-[#151530] shadow-soft transition-all duration-300 group ${appStore.isDragOver
                     ? 'border-primary shadow-lg scale-[1.02]'
                     : 'border-slate-300 dark:border-slate-700 hover:border-primary/50 hover:shadow-lg'
                     }`}

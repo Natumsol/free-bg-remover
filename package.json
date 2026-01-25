@@ -12,7 +12,8 @@
     "publish": "electron-forge publish",
     "lint": "eslint --ext .ts,.tsx .",
     "postinstall": "electron-rebuild -f -w better-sqlite3",
-    "rebuild": "electron-rebuild -f"
+    "rebuild": "electron-rebuild -f",
+    "generate-icons": "bash scripts/generate-icons.sh"
   },
   "keywords": [],
   "author": {

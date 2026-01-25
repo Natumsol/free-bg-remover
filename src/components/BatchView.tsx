@@ -44,7 +44,7 @@ export const BatchView: React.FC = observer(() => {
     return (
         <div className="flex flex-col h-full">
             {/* Top Action Bar */}
-            <header className="flex-shrink-0 px-8 py-6 bg-background-light dark:bg-background-dark z-10">
+            <header className="flex-shrink-0 px-8 py-6 bg-[#f5f5f8] dark:bg-[#0f0f23] z-10">
                 <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 max-w-[1400px] mx-auto w-full">
                     {/* Page Title */}
                     <div className="flex flex-col gap-1">
@@ -148,7 +148,7 @@ export const BatchView: React.FC = observer(() => {
                                 <div className="size-24 rounded-3xl bg-gradient-to-br from-primary/10 to-blue-500/10 flex items-center justify-center">
                                     <span className="material-symbols-outlined text-primary text-[56px]">layers</span>
                                 </div>
-                                <div className="absolute -bottom-2 -right-2 size-8 rounded-xl bg-white dark:bg-slate-800 shadow-lg flex items-center justify-center border-2 border-background-light dark:border-background-dark">
+                                <div className="absolute -bottom-2 -right-2 size-8 rounded-xl bg-white dark:bg-slate-800 shadow-lg flex items-center justify-center border-2 border-[#f5f5f8] dark:border-[#0f0f23]">
                                     <span className="material-symbols-outlined text-slate-400 text-[20px]">add</span>
                                 </div>
                             </div>

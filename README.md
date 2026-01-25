@@ -41,6 +41,16 @@ npm install
 npm start
 ```
 
+### 图标生成
+
+更新应用图标后，运行以下命令重新生成所有尺寸：
+
+```bash
+npm run generate-icons
+```
+
+详细说明请查看 [scripts/README.md](./scripts/README.md)
+
 ### 构建应用
 
 ```bash

@@ -11,16 +11,28 @@ import path from 'path';
 
 const config: ForgeConfig = {
   packagerConfig: {
+    icon: path.join(__dirname, 'resources', 'images', 'icon'),
     asar: {
       unpack: '*.{node,dll}',
     },
   },
   rebuildConfig: {},
   makers: [
-    new MakerSquirrel({}),
+    new MakerSquirrel({
+      // Windows installer
+      setupIcon: path.join(__dirname, 'resources', 'images', 'icon.png'),
+    }),
     new MakerZIP({}, ['darwin']),
-    new MakerRpm({}),
-    new MakerDeb({}),
+    new MakerRpm({
+      options: {
+        icon: path.join(__dirname, 'resources', 'images', 'icon.png'),
+      },
+    }),
+    new MakerDeb({
+      options: {
+        icon: path.join(__dirname, 'resources', 'images', 'icon.png'),
+      },
+    }),
   ],
   plugins: [
     new AutoUnpackNativesPlugin({}),

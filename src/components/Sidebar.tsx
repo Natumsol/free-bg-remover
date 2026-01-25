@@ -2,17 +2,22 @@ import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { useTranslation } from 'react-i18next';
 import { appStore } from '../stores/AppStore';
+import iconPath from '../../resources/images/icon.png';
 
 export const Sidebar: React.FC = observer(() => {
     const { t } = useTranslation();
 
     return (
-        <aside className="flex w-64 flex-col border-r border-slate-200 dark:border-slate-800 bg-sidebar-light dark:bg-sidebar-dark transition-colors duration-300">
+        <aside className="flex w-64 flex-col border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-[#151530] transition-colors duration-300">
             {/* Header */}
             <div className="p-6 pb-2">
                 <div className="flex items-center gap-3">
-                    <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-blue-600 text-white shadow-glow">
-                        <span className="material-symbols-outlined text-[24px]">layers</span>
+                    <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl overflow-hidden shadow-glow">
+                        <img
+                            src={iconPath}
+                            alt="App Icon"
+                            className="h-full w-full object-cover"
+                        />
                     </div>
                     <div className="flex flex-col">
                         <h1 className="text-base font-bold leading-tight tracking-tight text-slate-900 dark:text-white">
@@ -24,6 +29,7 @@ export const Sidebar: React.FC = observer(() => {
             </div>
 
             {/* Navigation */}
+
             <nav className="flex-1 overflow-y-auto px-4 py-6">
                 <div className="flex flex-col gap-1">
                     {/* Home */}

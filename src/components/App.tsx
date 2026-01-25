@@ -84,7 +84,7 @@ export const App: React.FC = observer(() => {
         <div className="flex h-screen w-full overflow-hidden">
             <Sidebar />
 
-            <main className="flex h-full flex-1 flex-col overflow-hidden bg-background-light dark:bg-background-dark relative">
+            <main className="flex h-full flex-1 flex-col overflow-hidden bg-[#f5f5f8] dark:bg-[#0f0f23] relative">
                 {/* Window Drag Area (Mac-like feel) */}
                 <div
                     className="h-8 w-full shrink-0 select-none"

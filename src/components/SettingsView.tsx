@@ -29,7 +29,7 @@ export const SettingsView: React.FC = observer(() => {
     return (
         <div className="flex flex-col h-full">
             {/* Header */}
-            <header className="flex-shrink-0 px-8 py-6 bg-background-light dark:bg-background-dark z-10">
+            <header className="flex-shrink-0 px-8 py-6 bg-[#f5f5f8] dark:bg-[#0f0f23] z-10">
                 <div className="flex flex-col gap-1 max-w-4xl mx-auto w-full">
                     <h2 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">
                         {t('settings.title')}

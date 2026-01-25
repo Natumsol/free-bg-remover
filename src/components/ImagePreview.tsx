@@ -62,7 +62,7 @@ export const ImagePreview: React.FC = observer(() => {
             </div>
 
             {/* Image Display */}
-            <div className="flex-1 rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-sidebar-dark overflow-hidden shadow-soft">
+            <div className="flex-1 rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-[#151530] overflow-hidden shadow-soft">
                 <div className="h-full flex flex-col">
                     {/* Toolbar */}
                     <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 px-6 py-4 bg-slate-50 dark:bg-slate-800/50">

@@ -81,7 +81,7 @@ export const HistoryView: React.FC = observer(() => {
     return (
         <div className="flex-1 flex flex-col h-full overflow-hidden relative">
             {/* Top Toolbar */}
-            <header className="bg-white dark:bg-sidebar-dark border-b border-slate-200 dark:border-gray-800 px-8 py-5 flex flex-col gap-5 shrink-0 z-10">
+            <header className="bg-white dark:bg-[#151530] border-b border-slate-200 dark:border-gray-800 px-8 py-5 flex flex-col gap-5 shrink-0 z-10">
                 <div className="flex items-center justify-between">
                     <div>
                         <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
@@ -129,8 +129,8 @@ export const HistoryView: React.FC = observer(() => {
                             <button
                                 onClick={() => setViewMode('grid')}
                                 className={`h-full px-3 rounded-md flex items-center justify-center transition-all ${viewMode === 'grid'
-                                        ? 'bg-white dark:bg-gray-700 shadow-sm text-slate-900 dark:text-white'
-                                        : 'text-slate-600 hover:text-slate-900 dark:hover:text-white'
+                                    ? 'bg-white dark:bg-gray-700 shadow-sm text-slate-900 dark:text-white'
+                                    : 'text-slate-600 hover:text-slate-900 dark:hover:text-white'
                                     }`}
                             >
                                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -140,8 +140,8 @@ export const HistoryView: React.FC = observer(() => {
                             <button
                                 onClick={() => setViewMode('list')}
                                 className={`h-full px-3 rounded-md flex items-center justify-center transition-all ${viewMode === 'list'
-                                        ? 'bg-white dark:bg-gray-700 shadow-sm text-slate-900 dark:text-white'
-                                        : 'text-slate-600 hover:text-slate-900 dark:hover:text-white'
+                                    ? 'bg-white dark:bg-gray-700 shadow-sm text-slate-900 dark:text-white'
+                                    : 'text-slate-600 hover:text-slate-900 dark:hover:text-white'
                                     }`}
                             >
                                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -156,8 +156,8 @@ export const HistoryView: React.FC = observer(() => {
                     <button
                         onClick={() => setFilter('all')}
                         className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${filter === 'all'
-                                ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900'
-                                : 'bg-slate-100 dark:bg-gray-800 text-slate-600 dark:text-gray-400 hover:bg-slate-200 dark:hover:bg-gray-700'
+                            ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900'
+                            : 'bg-slate-100 dark:bg-gray-800 text-slate-600 dark:text-gray-400 hover:bg-slate-200 dark:hover:bg-gray-700'
                             }`}
                     >
                         {t('history.filterAll')}
