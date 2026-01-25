@@ -90,3 +90,6 @@ typings/
 
 # Electron-Forge
 out/
+
+# Icon generation intermediate files
+resources/images/*.iconset/
