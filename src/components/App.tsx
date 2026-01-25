@@ -1,13 +1,32 @@
 import React, { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
+import { useTranslation } from 'react-i18next';
 import { Sidebar } from './Sidebar';
 import { DropZone } from './DropZone';
 import { ProcessingView } from './ProcessingView';
 import { ResultView } from './ResultView';
 import { ImagePreview } from './ImagePreview';
+import { BatchView } from './BatchView';
+import { SettingsView } from './SettingsView';
+import { HistoryView } from './HistoryView';
 import { appStore } from '../stores/AppStore';
 
 export const App: React.FC = observer(() => {
+    const { i18n } = useTranslation();
+
+    useEffect(() => {
+        // Apply theme on mount
+        appStore.applyTheme();
+
+        // Sync language with store
+        i18n.changeLanguage(appStore.language);
+
+        // Setup theme listener
+        const cleanupThemeListener = appStore.setupThemeListener();
+
+        return cleanupThemeListener;
+    }, [i18n]);
+
     useEffect(() => {
         // Listen for model ready event
         const unsubscribeReady = window.electronAPI.onModelReady(() => {
@@ -47,7 +66,13 @@ export const App: React.FC = observer(() => {
                 return <ResultView />;
 
             case 'history':
-                return appStore.hasProcessedImages ? <ImagePreview /> : <DropZone />;
+                return <HistoryView />;
+
+            case 'batch':
+                return <BatchView />;
+
+            case 'settings':
+                return <SettingsView />;
 
             case 'home':
             default:

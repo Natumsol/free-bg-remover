@@ -5,16 +5,12 @@ import { appStore } from '../stores/AppStore';
 interface BeforeAfterSliderProps {
     beforeImage: string;
     afterImage: string;
-    backgroundColor?: string;
-    backgroundImage?: string;
     className?: string;
 }
 
 export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = observer(({
     beforeImage,
     afterImage,
-    backgroundColor,
-    backgroundImage,
     className = ''
 }) => {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -85,18 +81,13 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = observer(({
                 {/* White opaque base layer to block the original image */}
                 <div className="absolute inset-0 bg-white" />
 
-                {/* Background layer for processed image */}
+                {/* Checkerboard pattern background for transparency */}
                 <div
                     className="absolute inset-0"
                     style={{
-                        backgroundColor: backgroundColor,
-                        backgroundImage: backgroundImage
-                            ? `url(${backgroundImage})`
-                            : !backgroundColor
-                                ? 'linear-gradient(45deg, #e5e7eb 25%, transparent 25%), linear-gradient(-45deg, #e5e7eb 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #e5e7eb 75%), linear-gradient(-45deg, transparent 75%, #e5e7eb 75%)'
-                                : undefined,
-                        backgroundSize: backgroundImage ? 'cover' : '20px 20px',
-                        backgroundPosition: backgroundImage ? 'center' : '0 0, 0 10px, 10px -10px, -10px 0px'
+                        backgroundImage: 'linear-gradient(45deg, #e5e7eb 25%, transparent 25%), linear-gradient(-45deg, #e5e7eb 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #e5e7eb 75%), linear-gradient(-45deg, transparent 75%, #e5e7eb 75%)',
+                        backgroundSize: '20px 20px',
+                        backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px'
                     }}
                 />
 

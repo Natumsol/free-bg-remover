@@ -1,10 +1,10 @@
 import { makeAutoObservable } from 'mobx';
 
 export interface ProcessedImage {
-    id: string;
+    id: number; // Changed from string to number for database compatibility
     originalPath: string;
     originalName: string;
-    originalData?: string; // base64 data URL of original
+    originalData: string | null; // base64 data URL of original
     processedData: string; // base64 data URL
     timestamp: number;
 }
@@ -13,6 +13,18 @@ export interface BackgroundConfig {
     type: 'transparent' | 'color' | 'image';
     color?: string;
     imageData?: string;
+}
+
+export interface BatchQueueItem {
+    id: string;
+    filePath: string;
+    fileName: string;
+    fileSize?: number;
+    status: 'waiting' | 'processing' | 'completed' | 'error';
+    progress: number;
+    thumbnail?: string; // base64 data URL
+    processedData?: string; // base64 data URL
+    error?: string;
 }
 
 export class AppStore {
@@ -34,17 +46,33 @@ export class AppStore {
     // UI state
     isDragOver = false;
     showHistory = false;
-    viewMode: 'home' | 'processing' | 'result' | 'history' = 'home';
+    viewMode: 'home' | 'processing' | 'result' | 'history' | 'batch' | 'settings' = 'home';
 
     // Comparison slider
     sliderPosition = 50; // 0-100
 
-    // Background editor
-    background: BackgroundConfig = { type: 'transparent' };
-    showBackgroundEditor = false;
+    // Batch processing
+    batchQueue: BatchQueueItem[] = [];
+    batchProcessing = false;
+
+    // Settings
+    language: 'en' | 'zh' = 'en';
+    theme: 'light' | 'dark' | 'auto' = 'auto';
 
     constructor() {
         makeAutoObservable(this);
+
+        // Load settings from localStorage
+        this.loadSettings();
+
+        // Apply initial theme
+        this.applyTheme();
+
+        // Setup theme listener for auto mode
+        this.setupThemeListener();
+
+        // Load history from database
+        this.loadHistoryFromDatabase();
     }
 
     // Model actions
@@ -78,20 +106,76 @@ export class AppStore {
         this.selectedFiles = files;
     }
 
-    addProcessedImage(image: ProcessedImage) {
-        this.processedImages.unshift(image); // Add to beginning
-        // Keep only last 50 images
-        if (this.processedImages.length > 50) {
-            this.processedImages = this.processedImages.slice(0, 50);
+    async addProcessedImage(image: Omit<ProcessedImage, 'id'>): Promise<number | null> {
+        try {
+            const result = await window.electronAPI.addHistory({
+                originalPath: image.originalPath,
+                originalName: image.originalName,
+                originalData: image.originalData,
+                processedData: image.processedData,
+            });
+
+            if (result.success && result.id) {
+                // Also add to local cache
+                this.processedImages.unshift({
+                    ...image,
+                    id: result.id,
+                });
+                // Keep only last 50 images in cache
+                if (this.processedImages.length > 50) {
+                    this.processedImages = this.processedImages.slice(0, 50);
+                }
+                return result.id;
+            }
+            return null;
+        } catch (error) {
+            console.error('Failed to add processed image:', error);
+            return null;
         }
     }
 
-    clearProcessedImages() {
-        this.processedImages = [];
+    async loadHistoryFromDatabase(limit = 50, offset = 0) {
+        try {
+            const result = await window.electronAPI.getHistory(limit, offset);
+            if (result.success && result.records) {
+                this.processedImages = result.records;
+            }
+        } catch (error) {
+            console.error('Failed to load history:', error);
+        }
     }
 
-    removeProcessedImage(id: string) {
-        this.processedImages = this.processedImages.filter(img => img.id !== id);
+    async clearProcessedImages() {
+        try {
+            const result = await window.electronAPI.clearHistory();
+            if (result.success) {
+                this.processedImages = [];
+            }
+        } catch (error) {
+            console.error('Failed to clear history:', error);
+        }
+    }
+
+    async removeProcessedImage(id: number) {
+        try {
+            const result = await window.electronAPI.deleteHistory(id);
+            if (result.success && result.deleted) {
+                this.processedImages = this.processedImages.filter(img => img.id !== id);
+            }
+        } catch (error) {
+            console.error('Failed to remove processed image:', error);
+        }
+    }
+
+    async searchHistoryImages(query: string) {
+        try {
+            const result = await window.electronAPI.searchHistory(query);
+            if (result.success && result.records) {
+                this.processedImages = result.records;
+            }
+        } catch (error) {
+            console.error('Failed to search history:', error);
+        }
     }
 
     setCurrentImageIndex(index: number) {
@@ -107,7 +191,7 @@ export class AppStore {
         this.showHistory = value;
     }
 
-    setViewMode(mode: 'home' | 'processing' | 'result' | 'history') {
+    setViewMode(mode: 'home' | 'processing' | 'result' | 'history' | 'batch' | 'settings') {
         this.viewMode = mode;
     }
 
@@ -115,12 +199,118 @@ export class AppStore {
         this.sliderPosition = Math.max(0, Math.min(100, position));
     }
 
-    setBackground(config: BackgroundConfig) {
-        this.background = config;
+    // Batch actions
+    setBatchProcessing(value: boolean) {
+        this.batchProcessing = value;
     }
 
-    setShowBackgroundEditor(value: boolean) {
-        this.showBackgroundEditor = value;
+    addToBatchQueue(items: BatchQueueItem[]) {
+        this.batchQueue.push(...items);
+    }
+
+    removeFromBatchQueue(id: string) {
+        this.batchQueue = this.batchQueue.filter(item => item.id !== id);
+    }
+
+    updateBatchQueueItem(id: string, updates: Partial<BatchQueueItem>) {
+        const item = this.batchQueue.find(item => item.id === id);
+        if (item) {
+            Object.assign(item, updates);
+        }
+    }
+
+    clearBatchQueue() {
+        this.batchQueue = [];
+    }
+
+    clearCompletedBatchItems() {
+        this.batchQueue = this.batchQueue.filter(item => item.status !== 'completed');
+    }
+
+    // Settings actions
+    setLanguage(language: 'en' | 'zh') {
+        this.language = language;
+        this.saveSettings();
+    }
+
+    setTheme(theme: 'light' | 'dark' | 'auto') {
+        this.theme = theme;
+        this.applyTheme();
+        this.saveSettings();
+    }
+
+    private loadSettings() {
+        try {
+            const savedLanguage = localStorage.getItem('app_language');
+            const savedTheme = localStorage.getItem('app_theme');
+
+            if (savedLanguage === 'en' || savedLanguage === 'zh') {
+                this.language = savedLanguage;
+            }
+
+            if (savedTheme === 'light' || savedTheme === 'dark' || savedTheme === 'auto') {
+                this.theme = savedTheme;
+            }
+        } catch (error) {
+            console.error('Failed to load settings:', error);
+        }
+    }
+
+    private saveSettings() {
+        try {
+            localStorage.setItem('app_language', this.language);
+            localStorage.setItem('app_theme', this.theme);
+        } catch (error) {
+            console.error('Failed to save settings:', error);
+        }
+    }
+
+    applyTheme() {
+        // Check if document is available (browser environment)
+        if (typeof document === 'undefined') {
+            console.log('⚠️ Document not available, skipping theme application');
+            return;
+        }
+
+        const root = document.documentElement;
+
+        console.log('🎨 Applying theme:', this.theme);
+        console.log('📋 Current classList:', root.classList.toString());
+
+        if (this.theme === 'auto') {
+            // Use system preference
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            console.log('🔄 Auto mode - System prefers dark:', prefersDark);
+            if (prefersDark) {
+                root.classList.add('dark');
+            } else {
+                root.classList.remove('dark');
+            }
+        } else if (this.theme === 'dark') {
+            console.log('🌙 Setting dark mode');
+            root.classList.add('dark');
+        } else {
+            console.log('☀️ Setting light mode');
+            root.classList.remove('dark');
+        }
+
+        console.log('✅ Theme applied. New classList:', root.classList.toString());
+    }
+
+    // Listen to system theme changes when in auto mode
+    setupThemeListener() {
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        const handleChange = () => {
+            if (this.theme === 'auto') {
+                this.applyTheme();
+            }
+        };
+
+        mediaQuery.addEventListener('change', handleChange);
+
+        return () => {
+            mediaQuery.removeEventListener('change', handleChange);
+        };
     }
 
     // Computed
@@ -130,6 +320,28 @@ export class AppStore {
 
     get hasProcessedImages() {
         return this.processedImages.length > 0;
+    }
+
+    get batchQueueCount() {
+        return this.batchQueue.length;
+    }
+
+    get batchProcessingCount() {
+        return this.batchQueue.filter(item => item.status === 'processing').length;
+    }
+
+    get batchCompletedCount() {
+        return this.batchQueue.filter(item => item.status === 'completed').length;
+    }
+
+    get batchTotalProgress() {
+        if (this.batchQueue.length === 0) return 0;
+        const total = this.batchQueue.reduce((sum, item) => {
+            if (item.status === 'completed') return sum + 100;
+            if (item.status === 'processing') return sum + item.progress;
+            return sum;
+        }, 0);
+        return total / this.batchQueue.length;
     }
 
     // Async actions
@@ -189,11 +401,10 @@ export class AppStore {
 
                 if (result.success && result.data) {
                     const fileName = filePath.split('/').pop() || filePath.split('\\').pop() || 'unknown';
-                    this.addProcessedImage({
-                        id: `${Date.now()}-${i}`,
+                    await this.addProcessedImage({
                         originalPath: filePath,
                         originalName: fileName,
-                        originalData,
+                        originalData: originalData || null,
                         processedData: result.data,
                         timestamp: Date.now(),
                     });
@@ -224,24 +435,119 @@ export class AppStore {
         const result = await window.electronAPI.saveFile(defaultPath);
 
         if (!result.canceled && result.filePath) {
-            // If background is set, composite the image with background
-            if (this.background.type !== 'transparent') {
-                // Convert MobX observable to plain object for IPC
-                const plainBackground = {
-                    type: this.background.type,
-                    color: this.background.color,
-                    imageData: this.background.imageData
-                };
+            // Save transparent PNG
+            await window.electronAPI.saveImage(current.processedData, result.filePath);
+        }
+    }
 
-                await window.electronAPI.saveImageWithBackground(
-                    current.processedData,
-                    plainBackground,
-                    result.filePath
-                );
-            } else {
-                // Save transparent PNG as-is
-                await window.electronAPI.saveImage(current.processedData, result.filePath);
+    async addFilesToBatch() {
+        const result = await window.electronAPI.selectFiles();
+        if (result.canceled || !result.filePaths || result.filePaths.length === 0) {
+            return;
+        }
+
+        const newItems: BatchQueueItem[] = await Promise.all(
+            result.filePaths.map(async (filePath, index) => {
+                const fileName = filePath.split('/').pop() || filePath.split('\\').pop() || 'unknown';
+
+                // Load thumbnail
+                let thumbnail: string | undefined;
+                try {
+                    const thumbResult = await window.electronAPI.readImage(filePath);
+                    if (thumbResult.success && thumbResult.data) {
+                        thumbnail = thumbResult.data;
+                    }
+                } catch (error) {
+                    console.error('Failed to load thumbnail:', error);
+                }
+
+                return {
+                    id: `${Date.now()}-${index}-${Math.random()}`,
+                    filePath,
+                    fileName,
+                    status: 'waiting' as const,
+                    progress: 0,
+                    thumbnail,
+                };
+            })
+        );
+
+        this.addToBatchQueue(newItems);
+    }
+
+    async processBatchQueue() {
+        if (!this.modelInitialized || this.batchProcessing) return;
+
+        const itemsToProcess = this.batchQueue.filter(
+            item => item.status === 'waiting' || item.status === 'error'
+        );
+
+        if (itemsToProcess.length === 0) return;
+
+        this.setBatchProcessing(true);
+
+        for (const item of itemsToProcess) {
+            try {
+                // Update status to processing
+                this.updateBatchQueueItem(item.id, {
+                    status: 'processing',
+                    progress: 0,
+                    error: undefined,
+                });
+
+                // Load original image as base64
+                const originalResult = await window.electronAPI.readImage(item.filePath);
+                const originalData = (originalResult.success && originalResult.data) ? originalResult.data : null;
+
+                // Process the image
+                const result = await window.electronAPI.processImage(item.filePath);
+
+                if (result.success && result.data) {
+                    // Update to completed
+                    this.updateBatchQueueItem(item.id, {
+                        status: 'completed',
+                        progress: 100,
+                        processedData: result.data,
+                    });
+
+                    // Add to history database
+                    await this.addProcessedImage({
+                        originalPath: item.filePath,
+                        originalName: item.fileName,
+                        originalData: originalData,
+                        processedData: result.data,
+                        timestamp: Date.now(),
+                    });
+                } else {
+                    // Update to error
+                    this.updateBatchQueueItem(item.id, {
+                        status: 'error',
+                        progress: 0,
+                        error: result.error || 'Processing failed',
+                    });
+                }
+            } catch (error) {
+                console.error('Batch processing error:', error);
+                this.updateBatchQueueItem(item.id, {
+                    status: 'error',
+                    progress: 0,
+                    error: error instanceof Error ? error.message : 'Unknown error',
+                });
             }
+        }
+
+        this.setBatchProcessing(false);
+    }
+
+    async saveBatchItem(itemId: string) {
+        const item = this.batchQueue.find(i => i.id === itemId);
+        if (!item || !item.processedData) return;
+
+        const defaultPath = item.fileName.replace(/\.[^.]+$/, '-no-bg.png');
+        const result = await window.electronAPI.saveFile(defaultPath);
+
+        if (!result.canceled && result.filePath) {
+            await window.electronAPI.saveImage(item.processedData, result.filePath);
         }
     }
 }

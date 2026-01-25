@@ -1,8 +1,11 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
+import { useTranslation } from 'react-i18next';
 import { appStore } from '../stores/AppStore';
 
 export const Sidebar: React.FC = observer(() => {
+    const { t } = useTranslation();
+
     return (
         <aside className="flex w-64 flex-col border-r border-slate-200 dark:border-slate-800 bg-sidebar-light dark:bg-sidebar-dark transition-colors duration-300">
             {/* Header */}
@@ -13,9 +16,9 @@ export const Sidebar: React.FC = observer(() => {
                     </div>
                     <div className="flex flex-col">
                         <h1 className="text-base font-bold leading-tight tracking-tight text-slate-900 dark:text-white">
-                            AI Remover
+                            {t('app.name')}
                         </h1>
-                        <p className="text-xs font-medium text-slate-400">Pro v2.1</p>
+                        <p className="text-xs font-medium text-slate-400">{t('app.subtitle')}</p>
                     </div>
                 </div>
             </div>
@@ -23,12 +26,6 @@ export const Sidebar: React.FC = observer(() => {
             {/* Navigation */}
             <nav className="flex-1 overflow-y-auto px-4 py-6">
                 <div className="flex flex-col gap-1">
-                    <div className="px-3 py-2">
-                        <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                            Menu
-                        </p>
-                    </div>
-
                     {/* Home */}
                     <button
                         className={`group flex items-center gap-3 rounded-lg px-3 py-2.5 transition-all ${appStore.viewMode === 'home'
@@ -38,18 +35,28 @@ export const Sidebar: React.FC = observer(() => {
                         onClick={() => appStore.setViewMode('home')}
                     >
                         <span className="material-symbols-outlined text-[20px] font-medium">home</span>
-                        <span className="text-sm font-medium">Home</span>
+                        <span className="text-sm font-medium">{t('nav.home')}</span>
                     </button>
 
                     <button
-                        className="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-slate-600 dark:text-slate-300 transition-all hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-white"
-                        onClick={() => appStore.selectAndProcessFiles()}
-                        disabled={!appStore.modelInitialized || appStore.processing}
+                        className={`group flex items-center gap-3 rounded-lg px-3 py-2.5 transition-all ${appStore.viewMode === 'batch'
+                            ? 'bg-primary/10 text-primary'
+                            : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-white'
+                            }`}
+                        onClick={() => appStore.setViewMode('batch')}
                     >
-                        <span className="material-symbols-outlined text-[20px] text-slate-400 group-hover:text-slate-600 dark:text-slate-500 dark:group-hover:text-slate-300">
-                            stack
+                        <span className={`material-symbols-outlined text-[20px] ${appStore.viewMode === 'batch'
+                            ? 'fill-1'
+                            : 'text-slate-400 group-hover:text-slate-600 dark:text-slate-500 dark:group-hover:text-slate-300'
+                            }`}>
+                            layers
                         </span>
-                        <span className="text-sm font-medium">Batch Process</span>
+                        <span className="text-sm font-medium">{t('nav.batch')}</span>
+                        {appStore.batchQueueCount > 0 && (
+                            <span className="ml-auto size-5 rounded-full bg-primary text-white text-[10px] font-bold flex items-center justify-center">
+                                {appStore.batchQueueCount}
+                            </span>
+                        )}
                     </button>
 
                     <button
@@ -66,7 +73,25 @@ export const Sidebar: React.FC = observer(() => {
                             }`}>
                             history
                         </span>
-                        <span className="text-sm font-medium">History ({appStore.processedImages.length})</span>
+                        <span className="text-sm font-medium">{t('nav.history')} ({appStore.processedImages.length})</span>
+                    </button>
+
+                    <div className="my-2 h-px bg-slate-100 dark:bg-slate-800 mx-3"></div>
+
+                    <button
+                        className={`group flex items-center gap-3 rounded-lg px-3 py-2.5 transition-all ${appStore.viewMode === 'settings'
+                            ? 'bg-primary/10 text-primary'
+                            : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-white'
+                            }`}
+                        onClick={() => appStore.setViewMode('settings')}
+                    >
+                        <span className={`material-symbols-outlined text-[20px] ${appStore.viewMode === 'settings'
+                            ? ''
+                            : 'text-slate-400 group-hover:text-slate-600 dark:text-slate-500 dark:group-hover:text-slate-300'
+                            }`}>
+                            settings
+                        </span>
+                        <span className="text-sm font-medium">{t('nav.settings')}</span>
                     </button>
                 </div>
             </nav>
@@ -89,13 +114,13 @@ export const Sidebar: React.FC = observer(() => {
                                 ? 'text-emerald-600 dark:text-emerald-400'
                                 : 'text-yellow-600 dark:text-yellow-400'
                                 }`}>
-                                Local Mode
+                                {t('status.localMode')}
                             </span>
                             <span className={`text-xs font-semibold ${appStore.modelInitialized
                                 ? 'text-emerald-900 dark:text-emerald-200'
                                 : 'text-yellow-900 dark:text-yellow-200'
                                 }`}>
-                                {appStore.modelInitialized ? 'Active' : 'Loading...'}
+                                {appStore.modelInitialized ? t('status.active') : t('status.loading')}
                             </span>
                         </div>
                     </div>

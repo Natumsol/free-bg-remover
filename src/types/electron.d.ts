@@ -23,6 +23,53 @@ export interface ElectronAPI {
         results?: Array<{ originalPath: string; data: string }>;
         error?: string
     }>;
+
+    // History operations
+    addHistory: (record: {
+        originalPath: string;
+        originalName: string;
+        originalData: string | null;
+        processedData: string;
+    }) => Promise<{ success: boolean; id?: number; error?: string }>;
+    getHistory: (limit?: number, offset?: number) => Promise<{
+        success: boolean;
+        records?: Array<{
+            id: number;
+            originalPath: string;
+            originalName: string;
+            originalData: string | null;
+            processedData: string;
+            timestamp: number;
+        }>;
+        error?: string;
+    }>;
+    getHistoryById: (id: number) => Promise<{
+        success: boolean;
+        record?: {
+            id: number;
+            originalPath: string;
+            originalName: string;
+            originalData: string | null;
+            processedData: string;
+            timestamp: number;
+        } | null;
+        error?: string;
+    }>;
+    deleteHistory: (id: number) => Promise<{ success: boolean; deleted?: boolean; error?: string }>;
+    clearHistory: () => Promise<{ success: boolean; count?: number; error?: string }>;
+    getHistoryCount: () => Promise<{ success: boolean; count?: number; error?: string }>;
+    searchHistory: (query: string, limit?: number) => Promise<{
+        success: boolean;
+        records?: Array<{
+            id: number;
+            originalPath: string;
+            originalName: string;
+            originalData: string | null;
+            processedData: string;
+            timestamp: number;
+        }>;
+        error?: string;
+    }>;
 }
 
 declare global {

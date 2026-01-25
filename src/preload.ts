@@ -31,4 +31,13 @@ contextBridge.exposeInMainWorld('electronAPI', {
     // Image processing
     processImage: (inputPath: string) => ipcRenderer.invoke('image:process', inputPath),
     processBatch: (inputPaths: string[]) => ipcRenderer.invoke('image:process-batch', inputPaths),
+
+    // History operations
+    addHistory: (record: any) => ipcRenderer.invoke('history:add', record),
+    getHistory: (limit?: number, offset?: number) => ipcRenderer.invoke('history:get', limit, offset),
+    getHistoryById: (id: number) => ipcRenderer.invoke('history:get-by-id', id),
+    deleteHistory: (id: number) => ipcRenderer.invoke('history:delete', id),
+    clearHistory: () => ipcRenderer.invoke('history:clear'),
+    getHistoryCount: () => ipcRenderer.invoke('history:count'),
+    searchHistory: (query: string, limit?: number) => ipcRenderer.invoke('history:search', query, limit),
 });

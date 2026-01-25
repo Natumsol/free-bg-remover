@@ -2,6 +2,7 @@
  * This file will automatically be loaded by vite and run in the "renderer" context.
  */
 
+import './i18n'; // Initialize i18n
 import './index.css';
 import React from 'react';
 import { createRoot } from 'react-dom/client';

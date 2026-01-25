@@ -1,10 +1,11 @@
 import React, { useMemo } from 'react';
 import { observer } from 'mobx-react-lite';
+import { useTranslation } from 'react-i18next';
 import { appStore } from '../stores/AppStore';
 import { BeforeAfterSlider } from './BeforeAfterSlider';
-import { BackgroundEditor } from './BackgroundEditor';
 
 export const ResultView: React.FC = observer(() => {
+    const { t } = useTranslation();
     const current = appStore.currentProcessedImage;
 
     if (!current) {
@@ -35,33 +36,23 @@ export const ResultView: React.FC = observer(() => {
                             {current.originalName}
                         </h2>
                         <p className="text-sm text-slate-500 dark:text-slate-400">
-                            Drag the slider to compare before and after
+                            {t('result.compare')}
                         </p>
                     </div>
                     <div className="flex items-center gap-3">
-                        <button
-                            onClick={() => appStore.setShowBackgroundEditor(!appStore.showBackgroundEditor)}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${appStore.showBackgroundEditor
-                                ? 'bg-primary text-white'
-                                : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
-                                }`}
-                        >
-                            <span className="material-symbols-outlined text-[20px]">palette</span>
-                            Edit Background
-                        </button>
                         <button
                             onClick={handleSave}
                             className="flex items-center gap-2 px-6 py-2 rounded-lg bg-primary text-white font-bold shadow-lg shadow-primary/30 hover:bg-blue-700 transition-all hover:-translate-y-0.5"
                         >
                             <span className="material-symbols-outlined text-[20px]">download</span>
-                            Save Image
+                            {t('result.saveImage')}
                         </button>
                         <button
                             onClick={handleNewImage}
                             className="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 font-medium transition-colors"
                         >
                             <span className="material-symbols-outlined text-[20px]">add_photo_alternate</span>
-                            New Image
+                            {t('result.processMore')}
                         </button>
                     </div>
                 </div>
@@ -74,8 +65,6 @@ export const ResultView: React.FC = observer(() => {
                             <BeforeAfterSlider
                                 beforeImage={current.originalData}
                                 afterImage={current.processedData}
-                                backgroundColor={appStore.background.type === 'color' ? appStore.background.color : undefined}
-                                backgroundImage={appStore.background.type === 'image' ? appStore.background.imageData : undefined}
                                 className="absolute inset-0"
                             />
                         ) : (
@@ -94,14 +83,11 @@ export const ResultView: React.FC = observer(() => {
                     </div>
                     <div className="h-1 w-1 rounded-full bg-slate-300 dark:bg-slate-700"></div>
                     <div className="flex items-center gap-1.5">
-                        <span className="material-symbols-outlined text-[16px]">palette</span>
-                        <span>Click "Edit Background" to customize</span>
+                        <span className="material-symbols-outlined text-[16px]">download</span>
+                        <span>Click "Save Image" to download</span>
                     </div>
                 </div>
             </div>
-
-            {/* Background Editor Sidebar */}
-            {appStore.showBackgroundEditor && <BackgroundEditor />}
         </div>
     );
 });

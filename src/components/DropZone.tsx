@@ -1,8 +1,10 @@
 import React, { useCallback } from 'react';
 import { observer } from 'mobx-react-lite';
+import { useTranslation } from 'react-i18next';
 import { appStore } from '../stores/AppStore';
 
 export const DropZone: React.FC = observer(() => {
+    const { t } = useTranslation();
     const handleDrop = useCallback(async (e: React.DragEvent) => {
         e.preventDefault();
         e.stopPropagation();
@@ -40,11 +42,11 @@ export const DropZone: React.FC = observer(() => {
             <div className="mb-8 flex flex-col gap-2">
                 <div className="flex items-center gap-3">
                     <h2 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white sm:text-4xl">
-                        Remove Backgrounds Instantly
+                        {t('home.title')}
                     </h2>
                 </div>
                 <p className="text-base font-normal text-slate-500 dark:text-slate-400 max-w-2xl">
-                    Drag and drop images here or select a file to process locally on your device. No data ever leaves your computer.
+                    {t('home.subtitle')}
                 </p>
             </div>
 
@@ -68,7 +70,7 @@ export const DropZone: React.FC = observer(() => {
                             lock
                         </span>
                         <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
-                            100% Offline &amp; Private
+                            {t('home.offlinePrivate')}
                         </span>
                     </div>
                 </div>
@@ -94,12 +96,12 @@ export const DropZone: React.FC = observer(() => {
 
                     {/* Main Text */}
                     <h3 className="mb-2 text-xl font-bold text-slate-900 dark:text-white">
-                        {appStore.processing ? 'Processing...' : 'Drop your image here'}
+                        {appStore.processing ? t('home.processing') : t('home.subtitle')}
                     </h3>
                     <p className="mb-8 text-sm text-slate-500 dark:text-slate-400">
                         {appStore.processing
-                            ? `${Math.round(appStore.progress)}% complete`
-                            : 'Supports JPG, PNG, WEBP up to 10MB'
+                            ? `${Math.round(appStore.progress)}%`
+                            : 'JPG, PNG, WEBP'
                         }
                     </p>
 
@@ -111,7 +113,7 @@ export const DropZone: React.FC = observer(() => {
                     >
                         <span className="relative z-10 flex items-center gap-2">
                             <span className="material-symbols-outlined text-[20px]">add_photo_alternate</span>
-                            {appStore.processing ? 'Processing...' : 'Select Image'}
+                            {appStore.processing ? t('home.processing') : t('home.selectFiles')}
                         </span>
                     </button>
 
@@ -126,7 +128,7 @@ export const DropZone: React.FC = observer(() => {
                 {/* Drag Overlay */}
                 {appStore.isDragOver && (
                     <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-primary/5">
-                        <div className="text-primary text-2xl font-bold">Drop files here</div>
+                        <div className="text-primary text-2xl font-bold">{t('home.dragActive')}</div>
                     </div>
                 )}
             </div>
@@ -135,12 +137,12 @@ export const DropZone: React.FC = observer(() => {
             <div className="mt-6 flex items-center justify-center gap-6 text-xs text-slate-400">
                 <div className="flex items-center gap-1.5">
                     <span className="material-symbols-outlined text-[16px]">speed</span>
-                    <span>Processed in &lt; 1s</span>
+                    <span>{t('home.processingSpeed')}</span>
                 </div>
                 <div className="h-1 w-1 rounded-full bg-slate-300 dark:bg-slate-700"></div>
                 <div className="flex items-center gap-1.5">
                     <span className="material-symbols-outlined text-[16px]">hd</span>
-                    <span>High Quality Output</span>
+                    <span>{t('home.highQuality')}</span>
                 </div>
             </div>
         </div>

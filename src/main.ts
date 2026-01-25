@@ -4,6 +4,17 @@ import fs from 'fs/promises';
 import started from 'electron-squirrel-startup';
 import sharp from 'sharp';
 import { initializeModel, processImage, processImages, getModelInfo } from './process';
+import {
+  initDatabase,
+  closeDatabase,
+  addHistoryRecord,
+  getHistoryRecords,
+  getHistoryRecordById,
+  deleteHistoryRecord,
+  clearAllHistory,
+  getHistoryCount,
+  searchHistory
+} from './database';
 
 // Vite environment variables
 declare const MAIN_WINDOW_VITE_DEV_SERVER_URL: string | undefined;
@@ -273,9 +284,111 @@ ipcMain.handle('file:save-image-with-background', async (
   }
 });
 
+// Database IPC handlers
+ipcMain.handle('history:add', async (_, record: Omit<Parameters<typeof addHistoryRecord>[0], 'timestamp'>) => {
+  try {
+    const id = addHistoryRecord({
+      ...record,
+      timestamp: Date.now()
+    });
+    return { success: true, id };
+  } catch (error) {
+    console.error('Add history record error:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error'
+    };
+  }
+});
+
+ipcMain.handle('history:get', async (_, limit?: number, offset?: number) => {
+  try {
+    const records = getHistoryRecords(limit, offset);
+    return { success: true, records };
+  } catch (error) {
+    console.error('Get history records error:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error'
+    };
+  }
+});
+
+ipcMain.handle('history:get-by-id', async (_, id: number) => {
+  try {
+    const record = getHistoryRecordById(id);
+    return { success: true, record };
+  } catch (error) {
+    console.error('Get history record by id error:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error'
+    };
+  }
+});
+
+ipcMain.handle('history:delete', async (_, id: number) => {
+  try {
+    const deleted = deleteHistoryRecord(id);
+    return { success: true, deleted };
+  } catch (error) {
+    console.error('Delete history record error:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error'
+    };
+  }
+});
+
+ipcMain.handle('history:clear', async () => {
+  try {
+    const count = clearAllHistory();
+    return { success: true, count };
+  } catch (error) {
+    console.error('Clear history error:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error'
+    };
+  }
+});
+
+ipcMain.handle('history:count', async () => {
+  try {
+    const count = getHistoryCount();
+    return { success: true, count };
+  } catch (error) {
+    console.error('Get history count error:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error'
+    };
+  }
+});
+
+ipcMain.handle('history:search', async (_, query: string, limit?: number) => {
+  try {
+    const records = searchHistory(query, limit);
+    return { success: true, records };
+  } catch (error) {
+    console.error('Search history error:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error'
+    };
+  }
+});
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 app.on('ready', async () => {
+  // Initialize database
+  try {
+    initDatabase();
+  } catch (error) {
+    console.error('❌ Database initialization error:', error);
+  }
+
   createWindow();
 
   // Start model initialization in background
@@ -301,9 +414,14 @@ app.on('ready', async () => {
 
 // Quit when all windows are closed, except on macOS.
 app.on('window-all-closed', () => {
+  closeDatabase();
   if (process.platform !== 'darwin') {
     app.quit();
   }
+});
+
+app.on('before-quit', () => {
+  closeDatabase();
 });
 
 app.on('activate', () => {

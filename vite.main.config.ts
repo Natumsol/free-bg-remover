@@ -16,6 +16,7 @@ export default defineConfig({
                 'onnxruntime-node',
                 'onnxruntime-common',
                 'sharp',
+                'better-sqlite3',
             ],
         },
         minify: false,

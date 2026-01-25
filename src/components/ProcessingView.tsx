@@ -1,8 +1,10 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
+import { useTranslation } from 'react-i18next';
 import { appStore } from '../stores/AppStore';
 
 export const ProcessingView: React.FC = observer(() => {
+    const { t } = useTranslation();
     return (
         <div className="flex h-full flex-col items-center justify-center p-8">
             {/* Image Preview with Overlay */}
@@ -31,10 +33,10 @@ export const ProcessingView: React.FC = observer(() => {
                     {/* Status Text */}
                     <div className="text-center mb-6">
                         <h3 className="text-2xl font-bold text-white mb-2">
-                            Processing Your Image
+                            {t('home.processing')}
                         </h3>
                         <p className="text-white/80">
-                            AI is removing the background...
+                            {t('status.loading')}
                         </p>
                     </div>
 
@@ -56,7 +58,7 @@ export const ProcessingView: React.FC = observer(() => {
                     {/* Tips */}
                     <div className="mt-8 text-center">
                         <p className="text-white/60 text-sm">
-                            💡 This process is 100% offline and private
+                            💡 {t('status.dataSecure')}
                         </p>
                     </div>
                 </div>
