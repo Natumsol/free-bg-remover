@@ -41,6 +41,24 @@
 @layer base {
   * {
     border-color: var(--color-slate-200);
+    /* Disable text selection for native app feel */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  /* Allow text selection for input fields and editable content */
+  input,
+  textarea,
+  [contenteditable="true"],
+  [contenteditable="true"] *,
+  .selectable,
+  .selectable * {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
   }
 
   body {

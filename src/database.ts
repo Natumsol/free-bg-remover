@@ -115,7 +115,7 @@ export function clearAllHistory(): number {
     const info = stmt.run();
 
     // Reset auto-increment counter
-    db.exec('DELETE FROM sqlite_sequence WHERE name="history"');
+    db.exec("DELETE FROM sqlite_sequence WHERE name='history'");
 
     return info.changes;
 }

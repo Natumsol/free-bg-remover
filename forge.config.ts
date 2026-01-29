@@ -12,9 +12,19 @@ import path from 'path';
 const config: ForgeConfig = {
   packagerConfig: {
     icon: path.join(__dirname, 'resources', 'images', 'icon'),
-    asar: {
-      unpack: '*.{node,dll}',
-    },
+    asar: true,
+    ignore: [],
+    afterCopy: [
+      (buildPath, electronVersion, platform, arch, callback) => {
+        console.log("Build path:", buildPath);
+        console.log("asarUnpack paths exist:", {
+          sharp: require("fs").existsSync(
+            path.join(buildPath, "node_modules/sharp")
+          ),
+        });
+        callback();
+      },
+    ],
   },
   rebuildConfig: {},
   makers: [
