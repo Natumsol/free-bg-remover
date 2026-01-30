@@ -13,7 +13,12 @@ import path from "path";
 // Configure environment for Node.js
 env.allowLocalModels = true;
 env.allowRemoteModels = true;
-env.localModelPath = './resources/models/';
+
+// Use different path for development vs production (packaged)
+const isPackaged = process.env.NODE_ENV === 'production' || process.resourcesPath?.includes('.app/Contents/Resources');
+env.localModelPath = isPackaged 
+    ? path.join(process.resourcesPath, 'models') + '/'
+    : './resources/models/';
 env.useBrowserCache = false;
 env.cacheDir = './.cache';
 
