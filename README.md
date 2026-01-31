@@ -1,7 +1,7 @@
 # Free BG Remover
 
 <div align="center">
-  <img src="resources/images/icon.png" alt="Logo" width="128" height="128">
+  <img src="./demo.png" alt="Logo" width="128" height="128">
   
   <h3 align="center">Free BG Remover</h3>
 
@@ -18,52 +18,55 @@
 
 ## ✨ Key Features
 
-*   **🔒 Privacy First**: All processing happens locally on your device. Your photos are never uploaded to any server.
-*   **⚡️ Lightning Fast**: Optimized with ONNX Runtime for efficient local inference (CPU-based, no heavy GPU required).
-*   **🧠 Advanced AI**: Powered by the [RMBG-1.4](https://huggingface.co/briaai/RMBG-1.4) model for high-quality foreground separation.
-*   **📂 Batch Processing**: Drag and drop multiple images to process them all at once.
-*   **📜 History Management**: Automatically saves your processing history locally (SQLite) for easy access.
-*   **🎨 Modern UI**: Clean, responsive interface built with React and Tailwind CSS.
-*   **🌙 Dark Mode**: Support for Light, Dark, and System Auto themes.
-*   **🌐 Multi-language**: Available in English and Simplified Chinese.
+- **🔒 Privacy First**: All processing happens locally on your device. Your photos are never uploaded to any server.
+- **⚡️ Lightning Fast**: Optimized with ONNX Runtime for efficient local inference (CPU-based, no heavy GPU required).
+- **🧠 Advanced AI**: Powered by the [RMBG-1.4](https://huggingface.co/briaai/RMBG-1.4) model for high-quality foreground separation.
+- **📂 Batch Processing**: Drag and drop multiple images to process them all at once.
+- **📜 History Management**: Automatically saves your processing history locally (SQLite) for easy access.
+- **🎨 Modern UI**: Clean, responsive interface built with React and Tailwind CSS.
+- **🌙 Dark Mode**: Support for Light, Dark, and System Auto themes.
+- **🌐 Multi-language**: Available in English and Simplified Chinese.
 
 ## 📥 Download
 
 Go to the [Releases](https://github.com/natumsol/free-bg-remover/releases) page to download the installer for your platform:
 
-*   **macOS**: `.dmg` (Apple Silicon & Intel)
-*   **Windows**: `.exe` (x64)
+- **macOS**: `.dmg` (Apple Silicon & Intel)
+- **Windows**: `.exe` (x64)
 
 ## 🛠 Tech Stack
 
-*   **Core**: [Electron](https://www.electronjs.org/), [React](https://react.dev/), [TypeScript](https://www.typescriptlang.org/)
-*   **Build Tool**: [Vite](https://vitejs.dev/)
-*   **AI Inference**: [Transformers.js](https://huggingface.co/docs/transformers.js), [ONNX Runtime](https://onnxruntime.ai/)
-*   **Image Processing**: [Sharp](https://sharp.pixelplumbing.com/)
-*   **Database**: [Better-SQLite3](https://github.com/WiseLibs/better-sqlite3)
-*   **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-*   **State Management**: [MobX](https://mobx.js.org/)
+- **Core**: [Electron](https://www.electronjs.org/), [React](https://react.dev/), [TypeScript](https://www.typescriptlang.org/)
+- **Build Tool**: [Vite](https://vitejs.dev/)
+- **AI Inference**: [Transformers.js](https://huggingface.co/docs/transformers.js), [ONNX Runtime](https://onnxruntime.ai/)
+- **Image Processing**: [Sharp](https://sharp.pixelplumbing.com/)
+- **Database**: [Better-SQLite3](https://github.com/WiseLibs/better-sqlite3)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **State Management**: [MobX](https://mobx.js.org/)
 
 ## 💻 Development
 
 ### Prerequisites
 
-*   Node.js 20+
-*   npm
+- Node.js 20+
+- npm
 
 ### Installation
 
 1.  **Clone the repository**
+
     ```bash
     git clone https://github.com/natumsol/free-bg-remover.git
     cd free-bg-remover
     ```
 
 2.  **Install dependencies**
+
     ```bash
     npm install
     ```
-    *Note: This will automatically compile native modules (`sharp`, `better-sqlite3`) for your system.*
+
+    _Note: This will automatically compile native modules (`sharp`, `better-sqlite3`) for your system._
 
 3.  **Start the app in development mode**
     ```bash
