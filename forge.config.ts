@@ -11,6 +11,261 @@ import path from 'path';
 import fs from 'fs';
 import { execSync } from 'child_process';
 
+// 开发依赖列表 - 这些都不会被打包
+const devDependencies = [
+  '@electron',
+  '@electron-forge',
+  '@esbuild',
+  '@eslint',
+  '@eslint-community',
+  '@eslint/js',
+  '@eslint/eslintrc',
+  '@types',
+  '@typescript-eslint',
+  '@vitejs',
+  'electron-to-chromium',
+  'electron-rebuild',
+  'esbuild',
+  'eslint',
+  'eslint-plugin-import',
+  'typescript',
+  'vite',
+  // 开发时使用的 CSS 工具
+  'autoprefixer',
+  'postcss',
+  'postcss-value-parser',
+  // 打包工具
+  '@malept',
+  '@sindresorhus',
+  '@szmarczak',
+  '@tootallnate',
+  '@xmldom',
+  'adm-zip',
+  'asar',
+  'extract-zip',
+  'fs-extra',
+  'got',
+  'cacheable-lookup',
+  'cacheable-request',
+  'decompress-response',
+  'http-cache-semantics',
+  'http2-wrapper',
+  'lowercase-keys',
+  'mimic-response',
+  'normalize-url',
+  'p-cancelable',
+  'quick-lru',
+  'resolve-alpn',
+  'responselike',
+  'progress',
+  'electron-winstaller',
+  'electron-installer-common',
+  'electron-installer-debian',
+  'electron-installer-redhat',
+  // 其他开发工具
+  '@inquirer',
+  '@isaacs',
+  '@listr2',
+  '@npmcli',
+  '@nodelib',
+  '@rtsao',
+  '@ungap',
+  '@vscode',
+  '@webassemblyjs',
+  '@xtuc',
+  '@jridgewell',
+  '@gar',
+  '@humanwhocodes',
+  'chalk',
+  'commander',
+  'debug',
+  'rimraf',
+  'cross-spawn',
+  'which',
+  'isexe',
+  'path-key',
+  'shebang-command',
+  'shebang-regex',
+  'bl',
+  'boolean',
+  'buffer',
+  'deep-extend',
+  'define-data-property',
+  'define-properties',
+  'detect-node',
+  'end-of-stream',
+  'enhanced-resolve',
+  'es-define-property',
+  'es-errors',
+  'es6-error',
+  'escalade',
+  'expand-template',
+  'flatbuffers',
+  'fraction.js',
+  'fs-constants',
+  'github-from-package',
+  'global-agent',
+  'globalthis',
+  'gopd',
+  'graceful-fs',
+  'guid-typescript',
+  'has-property-descriptors',
+  'ieee754',
+  'inherits',
+  'jiti',
+  'json-stringify-safe',
+  'long',
+  'magic-string',
+  'matcher',
+  'minimist',
+  'mkdirp-classic',
+  'napi-build-utils',
+  'node-abi',
+  'node-releases',
+  'object-keys',
+  'once',
+  'picocolors',
+  'platform',
+  'prebuild-install',
+  'pump',
+  'rc',
+  'readable-stream',
+  'roarr',
+  'safe-buffer',
+  'semver-compare',
+  'serialize-error',
+  'simple-concat',
+  'simple-get',
+  'source-map-js',
+  'sprintf-js',
+  'string_decoder',
+  'tapable',
+  'tar-fs',
+  'tar-stream',
+  'tunnel-agent',
+  'undici-types',
+  'update-browserslist-db',
+  'util-deprecate',
+  'wrappy',
+  'caniuse-lite',
+  'browserslist',
+  'baseline-browser-mapping',
+  // 'detect-libc',  // sharp 的生产依赖，不能排除
+  // 'file-uri-to-path',  // bindings 的依赖，不能排除
+  // 'bindings',  // better-sqlite3 的生产依赖，不能排除
+  'base64-js',
+  'proto\.js',  // protobufjs 需要保留，但下面有其他不需要的
+  'lucide-react',  // 未使用的图标库
+  'lightningcss-darwin-arm64',  // 开发时 CSS 工具
+];
+
+// 生成 ignore 正则表达式列表
+const createIgnorePatterns = (): RegExp[] => {
+  const patterns: RegExp[] = [
+    // 源代码和配置文件
+    /^\/src/,
+    /^\/scripts/,
+    /^\/.cache/,
+    /^\/.git/,
+    /^\/.gitignore/,
+    /^\/.npmrc/,
+    /^\/.eslintrc/,
+    /^\/README\.md/,
+    /^\/FEATURES\.md/,
+    /^\/forge\.config\.ts/,
+    /^\/forge\.env\.d\.ts/,
+    /^\/tsconfig\.json/,
+    /^\/postcss\.config\.js/,
+    /^\/tailwind\.config/,
+    /^\/vite\./,
+    /^\/index\.html/,
+    /^\/package-lock\.json/,
+    
+    // 文档和测试文件
+    /\/docs\//,
+    /\/test\//,
+    /\/tests\//,
+    /\/__tests__\//,
+    /\/\.github\//,
+    /\/\.git\//,
+    /\/example\//,
+    /\/examples\//,
+    /\/demo\//,
+    /\/benchmark\//,
+    /\/\.idea\//,
+    /\/\.vscode\//,
+    
+    // Source map 文件
+    /\.map$/,
+    
+    // TypeScript 源文件和声明文件（生产环境不需要 .d.ts）
+    /\.ts$/,
+    /\.d\.ts$/,
+    
+    // 特定不需要的模块
+    /\/onnxruntime-web\//,  // 使用 onnxruntime-node 即可
+    /\/caniuse-lite\//,
+    
+    // 文档文件
+    /\/README.*$/i,
+    /\/CHANGELOG.*$/i,
+    /\/HISTORY.*$/i,
+    /\/LICENSE.*$/i,
+    /\/LICENSE-MIT.*$/i,
+    /\/LICENSE-ISC.*$/i,
+    /\/COPYING.*$/i,
+    /\/AUTHORS.*$/i,
+    /\/CONTRIBUTORS.*$/i,
+    /\.md$/,
+    /\.markdown$/,
+    /\.txt$/,
+    
+    // 配置文件
+    /\.editorconfig$/,
+    /\.eslintrc/,
+    /\.prettierrc/,
+    /\.babelrc/,
+    /tsconfig\.json$/,
+    /jsconfig\.json$/,
+    /\.travis\.yml$/,
+    /\.github\/workflows\//,
+    /appveyor\.yml$/,
+    /\.codecov\.yml$/,
+    /\.nycrc/,
+    /\.gitattributes$/,
+    /\.gitignore$/,
+    /\.npmignore$/,
+    /\.eslintignore$/,
+    /\.prettierignore$/,
+    
+    // transformers 的 web 版本和非 node 版本（Node.js 环境只需要 node.cjs 版本）
+    /\/node_modules\/@huggingface\/transformers\/dist\/transformers\.js$/,
+    /\/node_modules\/@huggingface\/transformers\/dist\/transformers\.min\.js$/,
+    /\/node_modules\/@huggingface\/transformers\/dist\/transformers\.web\.js$/,
+    /\/node_modules\/@huggingface\/transformers\/dist\/transformers\.web\.min\.js$/,
+    /\/node_modules\/@huggingface\/transformers\/dist\/transformers\.node\.min\.cjs$/,  // 使用非 min 版本
+    /\/node_modules\/@huggingface\/transformers\/dist\/transformers\.node\.mjs$/,
+    /\/node_modules\/@huggingface\/transformers\/dist\/transformers\.node\.min\.mjs$/,
+    /\/node_modules\/@huggingface\/transformers\/dist\/ort-wasm-simd-threaded\.jsep\.mjs$/,
+    
+    // 移除 transformers 内部的重复依赖（这些在主 node_modules 中已存在）
+    /\/node_modules\/@huggingface\/transformers\/node_modules\/chownr\//,
+    /\/node_modules\/@huggingface\/transformers\/node_modules\/minipass\//,
+    /\/node_modules\/@huggingface\/transformers\/node_modules\/minizlib\//,
+    /\/node_modules\/@huggingface\/transformers\/node_modules\/onnxruntime-common\/dist\/umd\//,
+  ];
+  
+  // 添加开发依赖的 ignore 规则
+  for (const dep of devDependencies) {
+    // 精确匹配
+    patterns.push(new RegExp(`^\\/node_modules\\/${dep}$`));
+    // 匹配该模块下的所有内容
+    patterns.push(new RegExp(`^\\/node_modules\\/${dep}\\/`));
+  }
+  
+  return patterns;
+};
+
 const config: ForgeConfig = {
   packagerConfig: {
     icon: path.join(__dirname, 'resources', 'images', 'icon'),
@@ -20,7 +275,10 @@ const config: ForgeConfig = {
     extraResource: [
       path.join(__dirname, 'resources', 'models'),
     ],
-    ignore: [],
+    // 启用 prune 自动移除 devDependencies
+    prune: true,
+    // 额外的 ignore 规则
+    ignore: createIgnorePatterns(),
     afterExtract: [
       (extractPath, electronVersion, platform, arch, callback) => {
         console.log("Extract path:", extractPath);
@@ -96,6 +354,164 @@ const config: ForgeConfig = {
     ],
     afterPrune: [
       (buildPath, electronVersion, platform, arch, callback) => {
+        console.log('[afterPrune] Starting cleanup...');
+        
+        // Helper function to recursively delete files matching patterns
+        const deleteMatchingFiles = (dir: string, patterns: RegExp[]) => {
+          if (!fs.existsSync(dir)) return 0;
+          let count = 0;
+          const entries = fs.readdirSync(dir, { withFileTypes: true });
+          for (const entry of entries) {
+            const fullPath = path.join(dir, entry.name);
+            if (entry.isDirectory()) {
+              count += deleteMatchingFiles(fullPath, patterns);
+            } else if (patterns.some(p => p.test(entry.name))) {
+              fs.unlinkSync(fullPath);
+              count++;
+            }
+          }
+          return count;
+        };
+
+        // Helper function to recursively delete directories matching patterns
+        const deleteMatchingDirs = (dir: string, patterns: RegExp[]) => {
+          if (!fs.existsSync(dir)) return 0;
+          let count = 0;
+          const entries = fs.readdirSync(dir, { withFileTypes: true });
+          for (const entry of entries) {
+            const fullPath = path.join(dir, entry.name);
+            if (entry.isDirectory()) {
+              if (patterns.some(p => p.test(entry.name))) {
+                fs.rmSync(fullPath, { recursive: true, force: true });
+                count++;
+              } else {
+                count += deleteMatchingDirs(fullPath, patterns);
+              }
+            }
+          }
+          return count;
+        };
+
+        // Clean up unnecessary files
+        const nodeModulesDir = path.join(buildPath, 'node_modules');
+        if (fs.existsSync(nodeModulesDir)) {
+          // Delete TypeScript declaration files
+          const dtsCount = deleteMatchingFiles(nodeModulesDir, [/\.d\.ts$/]);
+          if (dtsCount > 0) console.log(`[afterPrune] Deleted ${dtsCount} .d.ts files`);
+
+          // Delete documentation files
+          const docPatterns = [/^README/i, /^CHANGELOG/i, /^HISTORY/i, /^LICENSE/i, /^COPYING/i, /^AUTHORS/i, /^CONTRIBUTORS/i, /\.md$/i];
+          const docCount = deleteMatchingFiles(nodeModulesDir, docPatterns);
+          if (docCount > 0) console.log(`[afterPrune] Deleted ${docCount} documentation files`);
+
+          // Delete test directories
+          const testDirPatterns = [/^test$/, /^tests$/, /^__tests__$/, /^spec$/, /^specs$/, /^benchmark$/, /^example$/, /^examples$/, /^demo$/, /^doc$/, /^docs$/];
+          const testDirCount = deleteMatchingDirs(nodeModulesDir, testDirPatterns);
+          if (testDirCount > 0) console.log(`[afterPrune] Deleted ${testDirCount} test/doc directories`);
+
+          // Delete source map files
+          const mapCount = deleteMatchingFiles(nodeModulesDir, [/\.map$/]);
+          if (mapCount > 0) console.log(`[afterPrune] Deleted ${mapCount} source map files`);
+        }
+
+        // Delete transformers internal duplicate dependencies (use main node_modules versions instead)
+        const transformersNodeModules = path.join(buildPath, 'node_modules/@huggingface/transformers/node_modules');
+        if (fs.existsSync(transformersNodeModules)) {
+          const duplicates = ['chownr', 'minipass', 'minizlib'];
+          for (const dup of duplicates) {
+            const dupPath = path.join(transformersNodeModules, dup);
+            if (fs.existsSync(dupPath)) {
+              fs.rmSync(dupPath, { recursive: true, force: true });
+              console.log(`[afterPrune] Deleted duplicate ${dup} from transformers`);
+            }
+          }
+        }
+
+        // Delete protobufjs (only needed by onnxruntime-web which is excluded)
+        const protobufjsPath = path.join(buildPath, 'node_modules/protobufjs');
+        if (fs.existsSync(protobufjsPath)) {
+          fs.rmSync(protobufjsPath, { recursive: true, force: true });
+          console.log('[afterPrune] Deleted protobufjs (only needed by onnxruntime-web)');
+        }
+
+        // Delete @protobufjs (dependency of protobufjs)
+        const protobufjsTypesPath = path.join(buildPath, 'node_modules/@protobufjs');
+        if (fs.existsSync(protobufjsTypesPath)) {
+          fs.rmSync(protobufjsTypesPath, { recursive: true, force: true });
+          console.log('[afterPrune] Deleted @protobufjs (dependency of protobufjs)');
+        }
+
+        // Delete transformers src directory (only dist is needed at runtime)
+        const transformersSrcPath = path.join(buildPath, 'node_modules/@huggingface/transformers/src');
+        if (fs.existsSync(transformersSrcPath)) {
+          fs.rmSync(transformersSrcPath, { recursive: true, force: true });
+          console.log('[afterPrune] Deleted transformers/src (source files)');
+        }
+
+        // Delete transformers types directory
+        const transformersTypesPath = path.join(buildPath, 'node_modules/@huggingface/transformers/types');
+        if (fs.existsSync(transformersTypesPath)) {
+          fs.rmSync(transformersTypesPath, { recursive: true, force: true });
+          console.log('[afterPrune] Deleted transformers/types (type definitions)');
+        }
+
+        // Delete onnxruntime-node binaries for other platforms (only keep current platform)
+        const onnxRuntimeBinPath = path.join(buildPath, 'node_modules/@huggingface/transformers/node_modules/onnxruntime-node/bin/napi-v3');
+        if (fs.existsSync(onnxRuntimeBinPath)) {
+          const platformDirs = fs.readdirSync(onnxRuntimeBinPath);
+          for (const platformDir of platformDirs) {
+            const platformPath = path.join(onnxRuntimeBinPath, platformDir);
+            // Keep only darwin/arm64 for macOS ARM builds
+            if (platformDir !== 'darwin' && fs.existsSync(platformPath)) {
+              fs.rmSync(platformPath, { recursive: true, force: true });
+              console.log(`[afterPrune] Deleted onnxruntime-node binaries for ${platformDir}`);
+            } else if (platformDir === 'darwin') {
+              // For darwin, only keep arm64 (remove x64)
+              const darwinPath = platformPath;
+              const x64Path = path.join(darwinPath, 'x64');
+              if (fs.existsSync(x64Path)) {
+                fs.rmSync(x64Path, { recursive: true, force: true });
+                console.log('[afterPrune] Deleted onnxruntime-node binaries for darwin/x64');
+              }
+            }
+          }
+        }
+
+        // Also clean up root onnxruntime-node if it exists
+        const rootOnnxRuntimePath = path.join(buildPath, 'node_modules/onnxruntime-node/bin');
+        if (fs.existsSync(rootOnnxRuntimePath)) {
+          const entries = fs.readdirSync(rootOnnxRuntimePath);
+          for (const entry of entries) {
+            const entryPath = path.join(rootOnnxRuntimePath, entry);
+            if (entry !== 'napi-v3' && fs.existsSync(entryPath)) {
+              fs.rmSync(entryPath, { recursive: true, force: true });
+              console.log(`[afterPrune] Deleted root onnxruntime-node/${entry}`);
+            }
+          }
+          // Clean napi-v3 subdirectories for other platforms
+          const napiV3Path = path.join(rootOnnxRuntimePath, 'napi-v3');
+          if (fs.existsSync(napiV3Path)) {
+            const platformDirs = fs.readdirSync(napiV3Path);
+            for (const platformDir of platformDirs) {
+              if (platformDir !== 'darwin') {
+                const platformPath = path.join(napiV3Path, platformDir);
+                if (fs.existsSync(platformPath)) {
+                  fs.rmSync(platformPath, { recursive: true, force: true });
+                  console.log(`[afterPrune] Deleted root onnxruntime-node/napi-v3/${platformDir}`);
+                }
+              } else {
+                // For darwin, remove x64
+                const x64Path = path.join(napiV3Path, 'darwin/x64');
+                if (fs.existsSync(x64Path)) {
+                  fs.rmSync(x64Path, { recursive: true, force: true });
+                  console.log('[afterPrune] Deleted root onnxruntime-node/napi-v3/darwin/x64');
+                }
+              }
+            }
+          }
+        }
+
+        // Platform-specific cleanup
         if (platform === 'darwin') {
           // Fix sharp: copy libvips dylibs and fix rpath
           const sharpLibDir = path.join(buildPath, 'node_modules/@img/sharp-darwin-arm64/lib');
@@ -141,6 +557,8 @@ const config: ForgeConfig = {
             }
           }
         }
+        
+        console.log('[afterPrune] Cleanup completed');
         callback();
       },
     ],

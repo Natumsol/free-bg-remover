@@ -13,4 +13,19 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  build: {
+    minify: 'esbuild',
+    sourcemap: false,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // 将大型依赖单独打包
+          vendor: ['react', 'react-dom'],
+          i18n: ['i18next', 'react-i18next'],
+          ui: ['mobx', 'mobx-react-lite'],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 1000,
+  },
 });

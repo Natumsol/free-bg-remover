@@ -19,7 +19,7 @@ export default defineConfig({
                 'better-sqlite3',
             ],
         },
-        minify: false,
+        minify: 'esbuild',
         commonjsOptions: {
             ignoreDynamicRequires: true,
         },
