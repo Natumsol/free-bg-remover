@@ -17,15 +17,15 @@ export const App: React.FC = observer(() => {
     useEffect(() => {
         // Apply theme on mount
         appStore.applyTheme();
-
-        // Sync language with store
-        i18n.changeLanguage(appStore.language);
-
         // Setup theme listener
         const cleanupThemeListener = appStore.setupThemeListener();
-
         return cleanupThemeListener;
-    }, [i18n]);
+    }, []);
+
+    useEffect(() => {
+        // Sync language with store
+        i18n.changeLanguage(appStore.language);
+    }, [i18n, appStore.language]);
 
     useEffect(() => {
         // Listen for model ready event
