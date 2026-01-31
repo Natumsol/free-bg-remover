@@ -3,6 +3,7 @@ import { MakerSquirrel } from '@electron-forge/maker-squirrel';
 import { MakerZIP } from '@electron-forge/maker-zip';
 import { MakerDeb } from '@electron-forge/maker-deb';
 import { MakerRpm } from '@electron-forge/maker-rpm';
+import { MakerDMG } from '@electron-forge/maker-dmg';
 import { VitePlugin } from '@electron-forge/plugin-vite';
 import { AutoUnpackNativesPlugin } from '@electron-forge/plugin-auto-unpack-natives';
 import { FusesPlugin } from '@electron-forge/plugin-fuses';
@@ -416,6 +417,10 @@ const config: ForgeConfig = {
     new MakerSquirrel({
       // Windows installer
       setupIcon: path.join(__dirname, 'resources', 'images', 'icon.png'),
+    }),
+    new MakerDMG({
+      icon: path.join(__dirname, 'resources', 'images', 'icon.icns'),
+      format: 'ULFO'
     }),
     new MakerZIP({}, ['darwin']),
     new MakerRpm({
