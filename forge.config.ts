@@ -11,152 +11,13 @@ import path from 'path';
 import fs from 'fs';
 import { execSync } from 'child_process';
 
-// 开发依赖列表 - 这些都不会被打包
+// 读取 package.json 获取开发依赖
+const packageJson = JSON.parse(fs.readFileSync(path.join(__dirname, 'package.json'), 'utf-8'));
 const devDependencies = [
-  '@electron',
-  '@electron-forge',
-  '@esbuild',
-  '@eslint',
-  '@eslint-community',
-  '@eslint/js',
-  '@eslint/eslintrc',
-  '@types',
-  '@typescript-eslint',
-  '@vitejs',
-  'electron-to-chromium',
-  'electron-rebuild',
-  'esbuild',
-  'eslint',
-  'eslint-plugin-import',
-  'typescript',
-  'vite',
-  // 开发时使用的 CSS 工具
-  'autoprefixer',
-  'postcss',
-  'postcss-value-parser',
-  // 打包工具
-  '@malept',
-  '@sindresorhus',
-  '@szmarczak',
-  '@tootallnate',
-  '@xmldom',
-  'adm-zip',
-  'asar',
-  'extract-zip',
-  'fs-extra',
-  'got',
-  'cacheable-lookup',
-  'cacheable-request',
-  'decompress-response',
-  'http-cache-semantics',
-  'http2-wrapper',
-  'lowercase-keys',
-  'mimic-response',
-  'normalize-url',
-  'p-cancelable',
-  'quick-lru',
-  'resolve-alpn',
-  'responselike',
-  'progress',
-  'electron-winstaller',
-  'electron-installer-common',
-  'electron-installer-debian',
-  'electron-installer-redhat',
-  // 其他开发工具
-  '@inquirer',
-  '@isaacs',
-  '@listr2',
-  '@npmcli',
-  '@nodelib',
-  '@rtsao',
-  '@ungap',
-  '@vscode',
-  '@webassemblyjs',
-  '@xtuc',
-  '@jridgewell',
-  '@gar',
-  '@humanwhocodes',
-  'chalk',
-  'commander',
-  'debug',
-  'rimraf',
-  'cross-spawn',
-  'which',
-  'isexe',
-  'path-key',
-  'shebang-command',
-  'shebang-regex',
-  'bl',
-  'boolean',
-  'buffer',
-  'deep-extend',
-  'define-data-property',
-  'define-properties',
-  'detect-node',
-  'end-of-stream',
-  'enhanced-resolve',
-  'es-define-property',
-  'es-errors',
-  'es6-error',
-  'escalade',
-  'expand-template',
-  'flatbuffers',
-  'fraction.js',
-  'fs-constants',
-  'github-from-package',
-  'global-agent',
-  'globalthis',
-  'gopd',
-  'graceful-fs',
-  'guid-typescript',
-  'has-property-descriptors',
-  'ieee754',
-  'inherits',
-  'jiti',
-  'json-stringify-safe',
-  'long',
-  'magic-string',
-  'matcher',
-  'minimist',
-  'mkdirp-classic',
-  'napi-build-utils',
-  'node-abi',
-  'node-releases',
-  'object-keys',
-  'once',
-  'picocolors',
-  'platform',
-  'prebuild-install',
-  'pump',
-  'rc',
-  'readable-stream',
-  'roarr',
-  'safe-buffer',
-  'semver-compare',
-  'serialize-error',
-  'simple-concat',
-  'simple-get',
-  'source-map-js',
-  'sprintf-js',
-  'string_decoder',
-  'tapable',
-  'tar-fs',
-  'tar-stream',
-  'tunnel-agent',
-  'undici-types',
-  'update-browserslist-db',
-  'util-deprecate',
-  'wrappy',
-  'caniuse-lite',
-  'browserslist',
-  'baseline-browser-mapping',
-  // 'detect-libc',  // sharp 的生产依赖，不能排除
-  // 'file-uri-to-path',  // bindings 的依赖，不能排除
-  // 'bindings',  // better-sqlite3 的生产依赖，不能排除
-  'base64-js',
-  'proto\.js',  // protobufjs 需要保留，但下面有其他不需要的
-  'lucide-react',  // 未使用的图标库
-  'lightningcss-darwin-arm64',  // 开发时 CSS 工具
+  ...Object.keys(packageJson.devDependencies || {}),
+  // 额外的需忽略的包（可能是隐式依赖或工具）
+  'lightningcss-darwin-arm64',
+  'lightningcss',
 ];
 
 // 生成 ignore 正则表达式列表
@@ -513,22 +374,8 @@ const config: ForgeConfig = {
 
         // Platform-specific cleanup
         if (platform === 'darwin') {
-          // Fix sharp: copy libvips dylibs and fix rpath
+          // Fix sharp: fix rpath (copying is done in afterCopy)
           const sharpLibDir = path.join(buildPath, 'node_modules/@img/sharp-darwin-arm64/lib');
-          const libvipsSourceDir = path.join(buildPath, 'node_modules/@img/sharp-libvips-darwin-arm64/lib');
-          
-          if (fs.existsSync(libvipsSourceDir) && fs.existsSync(sharpLibDir)) {
-            const files = fs.readdirSync(libvipsSourceDir);
-            for (const file of files) {
-              if (file.endsWith('.dylib')) {
-                const sourceFile = path.join(libvipsSourceDir, file);
-                const destFile = path.join(sharpLibDir, file);
-                fs.copyFileSync(sourceFile, destFile);
-                console.log(`[afterPrune] Copied ${file} to sharp-darwin-arm64/lib`);
-              }
-            }
-          }
-          
           const sharpNodePath = path.join(sharpLibDir, 'sharp-darwin-arm64.node');
           if (fs.existsSync(sharpNodePath)) {
             try {
