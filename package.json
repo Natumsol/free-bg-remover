@@ -2,7 +2,7 @@
   "name": "free-bg-remover",
   "productName": "Free BG Remover",
   "version": "1.0.0",
-  "description": "A free, private, and offline AI tool to remove image backgrounds instantly using RMBG-1.4.",
+  "description": "A free, private, and offline AI GUI application to remove image backgrounds instantly using RMBG-1.4.",
   "main": ".vite/build/main.js",
   "private": true,
   "scripts": {

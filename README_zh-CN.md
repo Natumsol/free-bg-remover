@@ -6,7 +6,7 @@
   <h3 align="center">Free BG Remover</h3>
 
   <p align="center">
-    一款免费、私密且离线的 AI 工具，可瞬间移除图片背景。
+    一款免费、私密且离线的 AI 图形界面 (GUI) 程序，可瞬间移除图片背景。
     <br />
     <a href="./README.md">English</a> · <a href="#下载">下载</a> · <a href="#开发">开发</a>
   </p>
@@ -14,7 +14,7 @@
 
 ---
 
-**Free BG Remover** 是一款基于顶尖 AI 模型 **RMBG-1.4** 的跨平台桌面应用程序。它允许您直接在计算机上移除图片背景，无需将任何数据上传到云端。
+**Free BG Remover** 是一款基于顶尖 AI 模型 **RMBG-1.4** 的跨平台桌面 GUI 应用程序。它允许您直接在计算机上移除图片背景，无需将任何数据上传到云端。
 
 ## ✨ 主要功能
 

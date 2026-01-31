@@ -6,7 +6,7 @@
   <h3 align="center">Free BG Remover</h3>
 
   <p align="center">
-    A free, private, and offline AI tool to remove image backgrounds instantly.
+    A free, private, and offline AI GUI application to remove image backgrounds instantly.
     <br />
     <a href="./README_zh-CN.md">简体中文</a> · <a href="#download">Download</a> · <a href="#development">Development</a>
   </p>
@@ -14,7 +14,7 @@
 
 ---
 
-**Free BG Remover** is a cross-platform desktop application powered by the state-of-the-art **RMBG-1.4** AI model. It allows you to remove backgrounds from images directly on your computer without uploading any data to the cloud.
+**Free BG Remover** is a cross-platform desktop GUI application powered by the state-of-the-art **RMBG-1.4** AI model. It allows you to remove backgrounds from images directly on your computer without uploading any data to the cloud.
 
 ## ✨ Key Features
 
