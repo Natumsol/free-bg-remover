@@ -40,4 +40,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
     clearHistory: () => ipcRenderer.invoke('history:clear'),
     getHistoryCount: () => ipcRenderer.invoke('history:count'),
     searchHistory: (query: string, limit?: number) => ipcRenderer.invoke('history:search', query, limit),
+
+    // Settings operations
+    readSettings: () => ipcRenderer.invoke('settings:read'),
+    saveSettings: (settings: any) => ipcRenderer.invoke('settings:save', settings),
 });

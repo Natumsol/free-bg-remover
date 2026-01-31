@@ -70,6 +70,10 @@ export interface ElectronAPI {
         }>;
         error?: string;
     }>;
+
+    // Settings operations
+    readSettings: () => Promise<any>;
+    saveSettings: (settings: any) => Promise<{ success: boolean; error?: string }>;
 }
 
 declare global {

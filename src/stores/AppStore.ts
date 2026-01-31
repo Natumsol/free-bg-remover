@@ -239,17 +239,18 @@ export class AppStore {
         this.saveSettings();
     }
 
-    private loadSettings() {
+    private async loadSettings() {
         try {
-            const savedLanguage = localStorage.getItem('app_language');
-            const savedTheme = localStorage.getItem('app_theme');
+            const settings = await window.electronAPI.readSettings();
 
-            if (savedLanguage === 'en' || savedLanguage === 'zh') {
-                this.language = savedLanguage;
+            if (settings.language === 'en' || settings.language === 'zh') {
+                this.language = settings.language;
             }
 
-            if (savedTheme === 'light' || savedTheme === 'dark' || savedTheme === 'auto') {
-                this.theme = savedTheme;
+            if (settings.theme === 'light' || settings.theme === 'dark' || settings.theme === 'auto') {
+                this.theme = settings.theme;
+                // Re-apply theme after loading
+                this.applyTheme();
             }
         } catch (error) {
             console.error('Failed to load settings:', error);
@@ -258,8 +259,10 @@ export class AppStore {
 
     private saveSettings() {
         try {
-            localStorage.setItem('app_language', this.language);
-            localStorage.setItem('app_theme', this.theme);
+            window.electronAPI.saveSettings({
+                language: this.language,
+                theme: this.theme
+            });
         } catch (error) {
             console.error('Failed to save settings:', error);
         }

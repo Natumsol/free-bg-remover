@@ -307,6 +307,31 @@ ipcMain.handle('history:add', async (_, record: Omit<Parameters<typeof addHistor
   }
 });
 
+// Settings IPC handlers
+const getSettingsPath = () => path.join(app.getPath('userData'), 'settings.json');
+
+ipcMain.handle('settings:read', async () => {
+  try {
+    const settingsPath = getSettingsPath();
+    const data = await fs.readFile(settingsPath, 'utf-8');
+    return JSON.parse(data);
+  } catch (error) {
+    // If file doesn't exist or is invalid, return empty object (defaults)
+    return {};
+  }
+});
+
+ipcMain.handle('settings:save', async (_, settings: any) => {
+  try {
+    const settingsPath = getSettingsPath();
+    await fs.writeFile(settingsPath, JSON.stringify(settings, null, 2), 'utf-8');
+    return { success: true };
+  } catch (error) {
+    console.error('Save settings error:', error);
+    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+  }
+});
+
 ipcMain.handle('history:get', async (_, limit?: number, offset?: number) => {
   try {
     const records = getHistoryRecords(limit, offset);
