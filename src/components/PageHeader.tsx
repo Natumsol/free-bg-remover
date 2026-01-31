@@ -15,7 +15,10 @@ export const PageHeader: React.FC<PageHeaderProps> = observer(({
     children
 }) => {
     return (
-        <header className="flex-shrink-0 px-8 pt-6 pb-6 bg-[#f5f5f8] dark:bg-[#0f0f23]">
+        <header
+            className="flex-shrink-0 px-8 pt-6 pb-6 bg-[#f5f5f8] dark:bg-[#0f0f23]"
+            style={{ WebkitAppRegion: 'drag' } as any}
+        >
             <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 max-w-[1400px] mx-auto w-full">
                 {/* Page Title Section */}
                 <div className="flex flex-col gap-2">
@@ -40,7 +43,10 @@ export const PageHeader: React.FC<PageHeaderProps> = observer(({
 
                 {/* Action Buttons / Additional Content */}
                 {children && (
-                    <div className="flex flex-wrap items-center gap-3">
+                    <div
+                        className="flex flex-wrap items-center gap-3"
+                        style={{ WebkitAppRegion: 'no-drag' } as any}
+                    >
                         {children}
                     </div>
                 )}
