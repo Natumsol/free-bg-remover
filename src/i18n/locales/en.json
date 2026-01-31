@@ -87,6 +87,7 @@
     },
     "settings": {
         "title": "Settings",
+        "subtitle": "Customize language, theme, and model preferences",
         "language": "Language",
         "theme": "Theme",
         "themeLight": "Light",

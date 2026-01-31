@@ -2,6 +2,7 @@ import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { useTranslation } from 'react-i18next';
 import { appStore } from '../stores/AppStore';
+import { PageHeader } from './PageHeader';
 
 export const SettingsView: React.FC = observer(() => {
     const { t, i18n } = useTranslation();
@@ -28,17 +29,12 @@ export const SettingsView: React.FC = observer(() => {
 
     return (
         <div className="flex flex-col h-full">
-            {/* Header */}
-            <header className="flex-shrink-0 px-8 py-6 bg-[#f5f5f8] dark:bg-[#0f0f23] z-10">
-                <div className="flex flex-col gap-1 max-w-4xl mx-auto w-full">
-                    <h2 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">
-                        {t('settings.title')}
-                    </h2>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">
-                        {t('settings.appearance')}
-                    </p>
-                </div>
-            </header>
+            {/* Unified Page Header */}
+            <PageHeader
+                title={t('settings.title')}
+                subtitle={t('settings.subtitle')}
+                icon="settings"
+            />
 
             {/* Content */}
             <div className="flex-1 overflow-y-auto px-8 pb-8">

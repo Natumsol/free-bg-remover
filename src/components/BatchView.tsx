@@ -3,6 +3,7 @@ import { observer } from 'mobx-react-lite';
 import { useTranslation } from 'react-i18next';
 import { appStore } from '../stores/AppStore';
 import { BatchQueueCard } from './BatchQueueCard';
+import { PageHeader } from './PageHeader';
 
 export const BatchView: React.FC = observer(() => {
     const { t } = useTranslation();
@@ -41,34 +42,25 @@ export const BatchView: React.FC = observer(() => {
     const hasItems = appStore.batchQueueCount > 0;
     const canProcess = hasItems && !appStore.batchProcessing && appStore.modelInitialized && waitingCount > 0;
 
+    // Generate subtitle with queue info
+    const getSubtitle = () => {
+        let subtitle = t('batch.itemsInQueue', { count: appStore.batchQueueCount });
+        if (appStore.batchCompletedCount > 0) {
+            subtitle += ` • ${t('batch.completed', { count: appStore.batchCompletedCount })}`;
+        }
+        return subtitle;
+    };
+
     return (
         <div className="flex flex-col h-full">
-            {/* Top Action Bar */}
-            <header className="flex-shrink-0 px-8 py-6 bg-[#f5f5f8] dark:bg-[#0f0f23] z-10">
-                <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 max-w-[1400px] mx-auto w-full">
-                    {/* Page Title */}
-                    <div className="flex flex-col gap-1">
-                        <h2 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">
-                            {t('batch.title')}
-                        </h2>
-                        <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
-                            <span className="material-symbols-outlined text-[18px]">dns</span>
-                            <span className="text-sm font-medium">
-                                {t('batch.itemsInQueue', { count: appStore.batchQueueCount })}
-                            </span>
-                            {appStore.batchCompletedCount > 0 && (
-                                <>
-                                    <span className="text-slate-300 dark:text-slate-600">•</span>
-                                    <span className="text-sm font-medium text-emerald-600 dark:text-emerald-400">
-                                        {t('batch.completed', { count: appStore.batchCompletedCount })}
-                                    </span>
-                                </>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Toolbar */}
-                    <div className="flex flex-wrap items-center gap-3">
+            {/* Unified Page Header */}
+            <PageHeader
+                title={t('batch.title')}
+                subtitle={getSubtitle()}
+                icon="layers"
+            >
+                {/* Toolbar */}
+                <div className="flex flex-wrap items-center gap-3">
                         {/* Clear Completed Button */}
                         {appStore.batchCompletedCount > 0 && (
                             <button
@@ -109,8 +101,7 @@ export const BatchView: React.FC = observer(() => {
                             )}
                         </button>
                     </div>
-                </div>
-            </header>
+            </PageHeader>
 
             {/* Scrollable Grid Content */}
             <div

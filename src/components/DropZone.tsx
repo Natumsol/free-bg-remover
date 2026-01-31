@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useTranslation } from 'react-i18next';
 import { appStore } from '../stores/AppStore';
+import { PageHeader } from './PageHeader';
 
 export const DropZone: React.FC = observer(() => {
     const { t } = useTranslation();
@@ -37,20 +38,16 @@ export const DropZone: React.FC = observer(() => {
     }, []);
 
     return (
-        <div className="flex h-full flex-col px-8 pb-8 md:px-12 lg:px-20 max-w-[1200px] mx-auto w-full">
-            {/* Page Heading */}
-            <div className="mb-8 flex flex-col gap-2">
-                <div className="flex items-center gap-3">
-                    <h2 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white sm:text-4xl">
-                        {t('home.title')}
-                    </h2>
-                </div>
-                <p className="text-base font-normal text-slate-500 dark:text-slate-400 max-w-2xl">
-                    {t('home.subtitle')}
-                </p>
-            </div>
+        <div className="flex h-full flex-col">
+            {/* Unified Page Header */}
+            <PageHeader
+                title={t('home.title')}
+                subtitle={t('home.subtitle')}
+                icon="home"
+            />
 
             {/* Main Drop Zone Area */}
+            <div className="flex-1 px-8 pb-8 md:px-12 lg:px-20 max-w-[1200px] mx-auto w-full overflow-hidden">
             <div
                 className={`relative flex flex-1 flex-col overflow-hidden rounded-2xl border-2 border-dashed bg-white dark:bg-[#151530] shadow-soft transition-all duration-300 group ${appStore.isDragOver
                     ? 'border-primary shadow-lg scale-[1.02]'
@@ -133,16 +130,20 @@ export const DropZone: React.FC = observer(() => {
                 )}
             </div>
 
+            </div>
+
             {/* Footer / Meta Info */}
-            <div className="mt-6 flex items-center justify-center gap-6 text-xs text-slate-400">
-                <div className="flex items-center gap-1.5">
-                    <span className="material-symbols-outlined text-[16px]">speed</span>
-                    <span>{t('home.processingSpeed')}</span>
-                </div>
-                <div className="h-1 w-1 rounded-full bg-slate-300 dark:bg-slate-700"></div>
-                <div className="flex items-center gap-1.5">
-                    <span className="material-symbols-outlined text-[16px]">hd</span>
-                    <span>{t('home.highQuality')}</span>
+            <div className="px-8 pb-6 md:px-12 lg:px-20 max-w-[1200px] mx-auto w-full">
+                <div className="flex items-center justify-center gap-6 text-xs text-slate-400">
+                    <div className="flex items-center gap-1.5">
+                        <span className="material-symbols-outlined text-[16px]">speed</span>
+                        <span>{t('home.processingSpeed')}</span>
+                    </div>
+                    <div className="h-1 w-1 rounded-full bg-slate-300 dark:bg-slate-700"></div>
+                    <div className="flex items-center gap-1.5">
+                        <span className="material-symbols-outlined text-[16px]">hd</span>
+                        <span>{t('home.highQuality')}</span>
+                    </div>
                 </div>
             </div>
         </div>

@@ -9,8 +9,14 @@ export const Sidebar: React.FC = observer(() => {
 
     return (
         <aside className="flex w-64 flex-col border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-[#151530] transition-colors duration-300">
+            {/* Window Drag Area - Makes the top area draggable */}
+            <div
+                className="h-8 w-full shrink-0 select-none"
+                style={{ WebkitAppRegion: 'drag' } as any}
+            />
+
             {/* Header */}
-            <div className="p-6 pb-2">
+            <div className="px-6 pb-2 pt-2">
                 <div className="flex items-center gap-3">
                     <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl overflow-hidden shadow-glow">
                         <img
