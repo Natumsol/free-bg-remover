@@ -17,7 +17,8 @@ export const DropZone: React.FC = observer(() => {
             .map(file => file.path!);
 
         if (imagePaths.length > 0) {
-            await appStore.processFiles(imagePaths);
+            // Only process the first file in home view
+            await appStore.processFiles([imagePaths[0]]);
         }
     }, []);
 

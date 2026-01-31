@@ -6,7 +6,7 @@ export interface ElectronAPI {
     onModelError: (callback: (error: string) => void) => () => void;
 
     // File operations
-    selectFiles: () => Promise<{ canceled: boolean; filePaths?: string[] }>;
+    selectFiles: (allowMultiple?: boolean) => Promise<{ canceled: boolean; filePaths?: string[] }>;
     saveFile: (defaultPath: string) => Promise<{ canceled: boolean; filePath?: string }>;
     saveImage: (base64Data: string, outputPath: string) => Promise<{ success: boolean; error?: string }>;
     saveImageWithBackground: (

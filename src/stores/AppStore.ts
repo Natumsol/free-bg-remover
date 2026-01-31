@@ -366,7 +366,7 @@ export class AppStore {
     }
 
     async selectAndProcessFiles() {
-        const result = await window.electronAPI.selectFiles();
+        const result = await window.electronAPI.selectFiles(false);
         if (result.canceled || !result.filePaths || result.filePaths.length === 0) {
             return;
         }

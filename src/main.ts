@@ -86,11 +86,16 @@ ipcMain.handle('model:info', async () => {
   return getModelInfo();
 });
 
-ipcMain.handle('file:select', async () => {
+ipcMain.handle('file:select', async (_, allowMultiple = true) => {
   if (!mainWindow) return { canceled: true };
 
+  const properties: ('openFile' | 'multiSelections')[] = ['openFile'];
+  if (allowMultiple) {
+    properties.push('multiSelections');
+  }
+
   const result = await dialog.showOpenDialog(mainWindow, {
-    properties: ['openFile', 'multiSelections'],
+    properties,
     filters: [
       { name: 'Images', extensions: ['jpg', 'jpeg', 'png', 'webp'] }
     ]

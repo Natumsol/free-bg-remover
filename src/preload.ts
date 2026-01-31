@@ -20,7 +20,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     },
 
     // File operations
-    selectFiles: () => ipcRenderer.invoke('file:select'),
+    selectFiles: (allowMultiple?: boolean) => ipcRenderer.invoke('file:select', allowMultiple),
     saveFile: (defaultPath: string) => ipcRenderer.invoke('file:save', defaultPath),
     saveImage: (base64Data: string, outputPath: string) =>
         ipcRenderer.invoke('file:save-image', base64Data, outputPath),
