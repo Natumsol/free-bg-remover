@@ -1,8 +1,8 @@
 {
   "name": "free-bg-remover",
-  "productName": "free-bg-remover",
+  "productName": "Free BG Remover",
   "version": "1.0.0",
-  "description": "My Electron application description",
+  "description": "A free, private, and offline AI tool to remove image backgrounds instantly using RMBG-1.4.",
   "main": ".vite/build/main.js",
   "private": true,
   "scripts": {
@@ -15,7 +15,18 @@
     "rebuild": "electron-rebuild -f",
     "generate-icons": "bash scripts/generate-icons.sh"
   },
-  "keywords": [],
+  "keywords": [
+    "background-remover",
+    "ai",
+    "electron",
+    "offline",
+    "privacy",
+    "rmbg-1.4",
+    "image-processing",
+    "batch-processing",
+    "react",
+    "typescript"
+  ],
   "author": {
     "name": "Natumsol",
     "email": "natumsol@gmail.com"
