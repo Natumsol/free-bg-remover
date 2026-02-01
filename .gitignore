@@ -88,6 +88,9 @@ typings/
 # Vite
 .vite/
 
+# AI Models
+resources/models/
+
 # Electron-Forge
 out/
 
