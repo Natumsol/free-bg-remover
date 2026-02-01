@@ -1,7 +1,7 @@
 # Free BG Remover
 
 <div align="center">
-  <img src="./demo.png" alt="Logo" width="128" height="128">
+  <img src="./demo.png" alt="Logo" height="500">
   
   <h3 align="center">Free BG Remover</h3>
 
