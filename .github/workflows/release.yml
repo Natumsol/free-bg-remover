@@ -26,8 +26,12 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      # sharp 和 better-sqlite3 需要在 postinstall 中编译，npm ci 会自动触发
-      # 如果遇到编译问题，可能需要显式运行 rebuild
+      - name: Download Model Files
+        run: |
+          mkdir -p resources/models/briaai/RMBG-1.4/onnx
+          curl -L -o resources/models/briaai/RMBG-1.4/config.json https://huggingface.co/briaai/RMBG-1.4/resolve/main/config.json
+          curl -L -o resources/models/briaai/RMBG-1.4/preprocessor_config.json https://huggingface.co/briaai/RMBG-1.4/resolve/main/preprocessor_config.json
+          curl -L -o resources/models/briaai/RMBG-1.4/onnx/model_fp16.onnx https://huggingface.co/briaai/RMBG-1.4/resolve/main/onnx/model_fp16.onnx
       
       - name: Build and Make
         run: npm run make -- --arch=arm64 --platform=darwin
@@ -57,6 +61,14 @@ jobs:
 
       - name: Install Dependencies
         run: npm ci
+
+      - name: Download Model Files
+        shell: bash
+        run: |
+          mkdir -p resources/models/briaai/RMBG-1.4/onnx
+          curl -L -o resources/models/briaai/RMBG-1.4/config.json https://huggingface.co/briaai/RMBG-1.4/resolve/main/config.json
+          curl -L -o resources/models/briaai/RMBG-1.4/preprocessor_config.json https://huggingface.co/briaai/RMBG-1.4/resolve/main/preprocessor_config.json
+          curl -L -o resources/models/briaai/RMBG-1.4/onnx/model_fp16.onnx https://huggingface.co/briaai/RMBG-1.4/resolve/main/onnx/model_fp16.onnx
 
       - name: Build and Make
         # Windows 默认是 x64，不需要额外参数，但为了明确可以加上
