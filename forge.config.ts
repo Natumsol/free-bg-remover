@@ -132,7 +132,7 @@ const config: ForgeConfig = {
   packagerConfig: {
     icon: path.join(__dirname, 'resources', 'images', 'icon'),
     asar: {
-      unpack: '**/@img/sharp-darwin-arm64/lib/*.dylib,**/@huggingface/transformers/node_modules/onnxruntime-node/bin/**/*.dylib',
+      unpack: '**/@img/sharp-darwin-arm64/lib/*.dylib,**/@huggingface/transformers/node_modules/onnxruntime-node/bin/**/*.dylib,**/@img/sharp-win32-x64/**/*.node',
     },
     extraResource: [
       path.join(__dirname, 'resources', 'models'),
@@ -416,7 +416,7 @@ const config: ForgeConfig = {
   makers: [
     new MakerSquirrel({
       // Windows installer
-      setupIcon: path.join(__dirname, 'resources', 'images', 'icon.png'),
+      setupIcon: path.join(__dirname, 'resources', 'images', 'icon.ico'),
     }),
     new MakerDMG({
       icon: path.join(__dirname, 'resources', 'images', 'icon.icns'),

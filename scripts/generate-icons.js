@@ -1,6 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
+// Use .default for png-to-ico as it seems to be an ES module or has default export
+const pngToIco = require('png-to-ico').default || require('png-to-ico');
 
 let sharp;
 try {
@@ -15,6 +17,7 @@ const ICON_DIR = path.join(PROJECT_ROOT, 'resources', 'images');
 const SOURCE_ICON = path.join(ICON_DIR, 'icon.png');
 const ICONSET_DIR = path.join(ICON_DIR, 'icon.iconset');
 const OUTPUT_ICNS = path.join(ICON_DIR, 'icon.icns');
+const OUTPUT_ICO = path.join(ICON_DIR, 'icon.ico');
 
 const SIZES = [
   { size: 16, name: 'icon_16x16.png' },
@@ -55,6 +58,25 @@ async function main() {
   } catch (error) {
      console.error('❌ Error generating icons with sharp:', error);
      process.exit(1);
+  }
+
+  // Generate .ico (Windows)
+  try {
+    console.log('\n🔄 Generating icon.ico for Windows...');
+    // Use generated sizes for ICO
+    const icoSizes = [
+      'icon_16x16.png',
+      'icon_32x32.png', 
+      'icon_128x128.png', 
+      'icon_256x256.png'
+    ];
+    const inputs = icoSizes.map(name => path.join(ICONSET_DIR, name));
+    
+    const buf = await pngToIco(inputs);
+    fs.writeFileSync(OUTPUT_ICO, buf);
+    console.log('✅ Successfully generated icon.ico');
+  } catch (error) {
+    console.error('❌ Failed to generate .ico file:', error);
   }
 
   // Convert to .icns (macOS only)
