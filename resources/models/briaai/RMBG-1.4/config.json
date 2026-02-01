@@ -1,6 +1,0 @@
-{
-    "model_type": "custom",
-    "architectures": [
-        "RMBG"
-    ]
-}
