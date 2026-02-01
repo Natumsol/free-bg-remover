@@ -57,7 +57,7 @@ export async function initializeModel(): Promise<boolean> {
 
         state.model = await AutoModel.from_pretrained(MODEL_ID, {
             device: "cpu",
-            dtype: "q8",
+            dtype: "fp32",
             progress_callback: (progress: any) => {
                 if (progress.progress !== undefined) {
                     console.log(`Loading model: ${Math.round(progress.progress * 100)}% - ${progress.status} - ${progress.file || ''}`);
