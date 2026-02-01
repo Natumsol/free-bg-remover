@@ -13,7 +13,8 @@
     "lint": "eslint --ext .ts,.tsx .",
     "postinstall": "electron-rebuild -f -w better-sqlite3 && electron-rebuild -f -w sharp",
     "rebuild": "electron-rebuild -f",
-    "generate-icons": "bash scripts/generate-icons.sh"
+    "generate-icons": "bash scripts/generate-icons.sh",
+    "download-models": "bash scripts/download-models.sh"
   },
   "keywords": [
     "background-remover",
