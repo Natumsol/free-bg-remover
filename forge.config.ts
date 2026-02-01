@@ -132,7 +132,7 @@ const config: ForgeConfig = {
   packagerConfig: {
     icon: path.join(__dirname, 'resources', 'images', 'icon'),
     asar: {
-      unpack: '**/@img/sharp-darwin-arm64/lib/*.dylib,**/@huggingface/transformers/node_modules/onnxruntime-node/bin/**/*.dylib,**/@img/sharp-win32-x64/**/*.node',
+      unpack: '**/@img/sharp-darwin-arm64/lib/*.dylib,**/@huggingface/transformers/node_modules/onnxruntime-node/bin/**/*,**/@img/sharp-win32-x64/lib/*.dll,**/@img/sharp-win32-x64/lib/*.node,**/node_modules/onnxruntime-node/bin/**/*',
     },
     extraResource: [
       path.join(__dirname, 'resources', 'models'),
@@ -209,6 +209,48 @@ const config: ForgeConfig = {
           console.log('libvips library exists in sharp-libvips:', fs.existsSync(libvipsLibPath));
           const libvipsNextToSharp = path.join(sharpLibDir, 'libvips-cpp.8.17.3.dylib');
           console.log('libvips library next to sharp.node:', fs.existsSync(libvipsNextToSharp));
+        }
+        
+        // On Windows, ensure sharp-win32-x64 DLLs are properly copied
+        if (platform === 'win32') {
+          const imgDir = path.join(buildPath, 'node_modules/@img');
+          const sharpWinDir = path.join(imgDir, 'sharp-win32-x64');
+          const sharpLibDir = path.join(sharpWinDir, 'lib');
+          
+          if (!fs.existsSync(sharpWinDir)) {
+            console.log('Copying sharp-win32-x64 to build...');
+            const sourceDir = path.join(__dirname, 'node_modules/@img/sharp-win32-x64');
+            
+            if (fs.existsSync(sourceDir)) {
+              fs.mkdirSync(imgDir, { recursive: true });
+              
+              const copyRecursive = (src: string, dest: string) => {
+                const stat = fs.statSync(src);
+                if (stat.isDirectory()) {
+                  fs.mkdirSync(dest, { recursive: true });
+                  for (const entry of fs.readdirSync(src)) {
+                    copyRecursive(path.join(src, entry), path.join(dest, entry));
+                  }
+                } else {
+                  fs.copyFileSync(src, dest);
+                }
+              };
+              
+              copyRecursive(sourceDir, sharpWinDir);
+              console.log('Copied sharp-win32-x64 to build');
+            } else {
+              console.warn('Source sharp-win32-x64 not found at:', sourceDir);
+            }
+          } else {
+            console.log('sharp-win32-x64 already exists in build');
+          }
+          
+          // Verify DLLs exist
+          const dllFiles = ['libvips-42.dll', 'libvips-cpp-8.17.3.dll'];
+          for (const dll of dllFiles) {
+            const dllPath = path.join(sharpLibDir, dll);
+            console.log(`DLL ${dll} exists:`, fs.existsSync(dllPath));
+          }
         }
         
         callback();
@@ -323,17 +365,23 @@ const config: ForgeConfig = {
           const platformDirs = fs.readdirSync(onnxRuntimeBinPath);
           for (const platformDir of platformDirs) {
             const platformPath = path.join(onnxRuntimeBinPath, platformDir);
-            // Keep only darwin/arm64 for macOS ARM builds
-            if (platformDir !== 'darwin' && fs.existsSync(platformPath)) {
+            // Keep only current platform
+            const currentPlatform = platform === 'darwin' ? 'darwin' : (platform === 'win32' ? 'win32' : platformDir);
+            if (platformDir !== currentPlatform && fs.existsSync(platformPath)) {
               fs.rmSync(platformPath, { recursive: true, force: true });
               console.log(`[afterPrune] Deleted onnxruntime-node binaries for ${platformDir}`);
-            } else if (platformDir === 'darwin') {
-              // For darwin, only keep arm64 (remove x64)
-              const darwinPath = platformPath;
-              const x64Path = path.join(darwinPath, 'x64');
-              if (fs.existsSync(x64Path)) {
-                fs.rmSync(x64Path, { recursive: true, force: true });
-                console.log('[afterPrune] Deleted onnxruntime-node binaries for darwin/x64');
+            } else if (platformDir === currentPlatform) {
+              // For current platform, only keep current arch
+              const currentArch = arch === 'arm64' ? 'arm64' : 'x64';
+              const archDirs = fs.readdirSync(platformPath);
+              for (const archDir of archDirs) {
+                if (archDir !== currentArch) {
+                  const archPath = path.join(platformPath, archDir);
+                  if (fs.existsSync(archPath)) {
+                    fs.rmSync(archPath, { recursive: true, force: true });
+                    console.log(`[afterPrune] Deleted onnxruntime-node binaries for ${platformDir}/${archDir}`);
+                  }
+                }
               }
             }
           }
@@ -354,19 +402,26 @@ const config: ForgeConfig = {
           const napiV3Path = path.join(rootOnnxRuntimePath, 'napi-v3');
           if (fs.existsSync(napiV3Path)) {
             const platformDirs = fs.readdirSync(napiV3Path);
+            const currentPlatform = platform === 'darwin' ? 'darwin' : (platform === 'win32' ? 'win32' : null);
             for (const platformDir of platformDirs) {
-              if (platformDir !== 'darwin') {
+              if (currentPlatform && platformDir !== currentPlatform) {
                 const platformPath = path.join(napiV3Path, platformDir);
                 if (fs.existsSync(platformPath)) {
                   fs.rmSync(platformPath, { recursive: true, force: true });
                   console.log(`[afterPrune] Deleted root onnxruntime-node/napi-v3/${platformDir}`);
                 }
-              } else {
-                // For darwin, remove x64
-                const x64Path = path.join(napiV3Path, 'darwin/x64');
-                if (fs.existsSync(x64Path)) {
-                  fs.rmSync(x64Path, { recursive: true, force: true });
-                  console.log('[afterPrune] Deleted root onnxruntime-node/napi-v3/darwin/x64');
+              } else if (platformDir === currentPlatform) {
+                // For current platform, remove other arch
+                const currentArch = arch === 'arm64' ? 'arm64' : 'x64';
+                const archDirs = fs.readdirSync(path.join(napiV3Path, platformDir));
+                for (const archDir of archDirs) {
+                  if (archDir !== currentArch) {
+                    const archPath = path.join(napiV3Path, platformDir, archDir);
+                    if (fs.existsSync(archPath)) {
+                      fs.rmSync(archPath, { recursive: true, force: true });
+                      console.log(`[afterPrune] Deleted root onnxruntime-node/napi-v3/${platformDir}/${archDir}`);
+                    }
+                  }
                 }
               }
             }
