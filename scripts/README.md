@@ -15,31 +15,33 @@ npm run generate-icons
 Or run the script directly:
 
 ```bash
-./scripts/generate-icons.sh
+node scripts/generate-icons.js
 ```
 
 ### What It Does
 
-The `generate-icons.sh` script automatically:
+The `generate-icons.js` script automatically:
 
 1. ✅ Validates source icon exists (`resources/images/icon.png`)
 2. ✅ Cleans up old icon files
-3. ✅ Generates 10 different sizes for macOS (16x16 to 1024x1024)
-4. ✅ Converts to `.icns` format for macOS
+3. ✅ Generates 10 different sizes (16x16 to 1024x1024) using `sharp`
+4. ✅ Converts to `.icns` format if running on macOS (using `iconutil`)
 5. ✅ Provides detailed progress output
 
 ### Requirements
 
-- **macOS only**: Uses native `sips` and `iconutil` commands
+- **Cross-platform**: Works on Windows, macOS, and Linux
+- Requires `sharp` (installed via `npm install`)
 - Source icon should be at least 1024x1024 pixels
 - PNG format with transparency support recommended
+- **macOS only**: `.icns` generation requires `iconutil` (built-in on macOS)
 
 ### Generated Files
 
 ```
 resources/images/
 ├── icon.png         # Source (you provide)
-├── icon.icns        # macOS app icon (generated)
+├── icon.icns        # macOS app icon (generated if on macOS)
 └── icon.iconset/    # Intermediate files (generated)
     ├── icon_16x16.png
     ├── icon_16x16@2x.png
@@ -69,26 +71,39 @@ The icon generation is **not** automatic during build. This is intentional to:
 - Give you control over when icons are regenerated
 - Keep build times fast
 
-If you want to automate it before packaging, you can add it to the `prepackage` script in `package.json`:
+## Model Download
 
-```json
-{
-  "scripts": {
-    "prepackage": "npm run generate-icons"
-  }
-}
+### Quick Start
+
+To download the required AI models:
+
+```bash
+npm run download-models
 ```
+
+Or run the script directly:
+
+```bash
+node scripts/download-models.js
+```
+
+### What It Does
+
+The `download-models.js` script automatically:
+
+1. ✅ Creates necessary model directories
+2. ✅ Downloads model configuration files
+3. ✅ Downloads the ONNX model file (approx. 84MB)
+4. ✅ Handles redirects and errors gracefully
 
 ### Troubleshooting
 
-**Error: Source icon not found**
-- Ensure `resources/images/icon.png` exists
-- Check the file path is correct
+**Error: Sharp is not installed**
+- Run `npm install` to install dependencies including `sharp`.
 
-**Error: Command not found: sips or iconutil**
-- These are macOS-only tools
-- For Linux/Windows, use alternative tools like ImageMagick
+**Error: Failed to download file**
+- Check your internet connection.
+- Ensure you have write permissions in the project directory.
 
 **Icons not updating in app**
-- Restart the Electron app after regenerating
-- Clear system icon cache: `sudo rm -rf /Library/Caches/com.apple.iconservices.store`
+- Restart the Electron app after regenerating.
